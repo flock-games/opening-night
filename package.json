@@ -13,7 +13,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@convex-dev/auth": "^0.0.81",
+    "@clerk/backend": "^2.5.1",
+    "@clerk/clerk-react": "^5.35.4",
     "@convex-dev/resend": "^0.1.5",
     "convex": "^1.23.0",
     "react": "^19.0.0",
