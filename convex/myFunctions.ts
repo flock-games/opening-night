@@ -1,5 +1,4 @@
 import { action } from "./_generated/server";
-import { getAuthUserId } from "@convex-dev/auth/server";
 import { createClerkClient } from "@clerk/backend";
 
 export const getYoutubeLikes = action({
@@ -8,12 +7,13 @@ export const getYoutubeLikes = action({
       secretKey: process.env.CLERK_CLIENT_SECRET,
     });
 
-    const userId = await getAuthUserId(ctx);
-    if (!userId) {
-      return;
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("User is not authenticated");
     }
     const clerkResponse = await clerkClient.users.getUserOauthAccessToken(
-      userId,
+      identity.subject,
       "google",
     );
     const accessToken = clerkResponse.data[0].token;
@@ -44,6 +44,8 @@ export const getYoutubeLikes = action({
           )
           .map((item: any) => {
             return {
+              id: item.id,
+              thumbnail: item.snippet.thumbnails.default.url,
               title: item.snippet.title,
               tags: item.snippet.tags || [],
               categoryId: item.snippet.categoryId,
