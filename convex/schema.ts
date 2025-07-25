@@ -5,7 +5,12 @@ import { v } from "convex/values";
 // requires indexes defined on `authTables`.
 // The schema provides more precise TypeScript types.
 export default defineSchema({
-  numbers: defineTable({
-    value: v.number(),
+  trailers: defineTable({
+    id: v.string(),
+    title: v.string(),
+    thumbnail: v.string(),
+    tags: v.array(v.string()),
+    categoryId: v.string(),
+    userId: v.string(),
   }),
 });

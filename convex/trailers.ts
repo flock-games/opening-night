@@ -1,0 +1,31 @@
+import { internalMutation, mutation } from "./_generated/server";
+import { v } from "convex/values";
+
+export const create = internalMutation({
+  args: {
+    id: v.string(),
+    title: v.string(),
+    thumbnail: v.string(),
+    tags: v.array(v.string()),
+    categoryId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { id, title, thumbnail, tags, categoryId } = args;
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("User is not authenticated");
+    }
+
+    // Create a new trailer entry
+    await ctx.db.insert("trailers", {
+      userId: identity.subject,
+      id,
+      title,
+      thumbnail,
+      tags,
+      categoryId,
+    });
+
+    return { success: true };
+  },
+});

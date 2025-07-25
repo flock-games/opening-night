@@ -38,7 +38,7 @@ export default function App() {
 }
 
 function YouTubeVideos() {
-  const videos = useAction(api.myFunctions.getYoutubeLikes);
+  const videos = useAction(api.youtube.getLikes);
 
   const fetchVideos = async () => {
     // Fetch videos from YouTube API

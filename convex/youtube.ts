@@ -1,7 +1,8 @@
 import { action } from "./_generated/server";
 import { createClerkClient } from "@clerk/backend";
+import { internal } from "./_generated/api";
 
-export const getYoutubeLikes = action({
+export const getLikes = action({
   handler: async (ctx, args) => {
     const clerkClient = createClerkClient({
       secretKey: process.env.CLERK_CLIENT_SECRET,
@@ -18,13 +19,9 @@ export const getYoutubeLikes = action({
     );
     const accessToken = clerkResponse.data[0].token;
 
-    let trailersData: any[] = [];
     let pageToken = undefined;
     let page = 1;
     do {
-      if (page % 10 === 0) {
-        console.log(`Fetching page ${page++} of YouTube likes...`);
-      }
       let url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&myRating=like&maxResults=50`;
       if (pageToken) {
         url += `&pageToken=${pageToken}`;
@@ -38,20 +35,20 @@ export const getYoutubeLikes = action({
       const data = await response.json();
 
       if ("items" in data) {
-        const pageTrailers = data.items
-          .filter((item: any) =>
-            item.snippet.title.toLowerCase().includes("trailer"),
-          )
-          .map((item: any) => {
-            return {
+        data.items
+          .filter((item: any) => {
+            const title = item.snippet.title.toLowerCase();
+            return title.includes("trailer") || title.includes("teaser");
+          })
+          .forEach(async (item: any) => {
+            ctx.runMutation(internal.trailers.create, {
               id: item.id,
-              thumbnail: item.snippet.thumbnails.default.url,
               title: item.snippet.title,
+              thumbnail: item.snippet.thumbnails.default.url,
               tags: item.snippet.tags || [],
               categoryId: item.snippet.categoryId,
-            };
+            });
           });
-        trailersData = trailersData.concat(pageTrailers);
       }
       if ("nextPageToken" in data && data.nextPageToken !== pageToken) {
         pageToken = data.nextPageToken;
@@ -60,7 +57,6 @@ export const getYoutubeLikes = action({
         pageToken = undefined;
       }
     } while (pageToken !== undefined && page < 100);
-    console.log("Trailers Data:", trailersData);
-    return trailersData;
+    return "done";
   },
 });
