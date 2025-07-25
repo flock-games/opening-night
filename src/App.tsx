@@ -9,6 +9,7 @@ import {
 } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
+import { useState } from "react";
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
             }}
           />
           <YouTubeVideos />
+          <MovieSearch />
           <TrailersList />
         </Authenticated>
         <AuthLoading>
@@ -36,6 +38,27 @@ export default function App() {
         </AuthLoading>
       </main>
     </>
+  );
+}
+
+function MovieSearch() {
+  const search = useAction(api.movies.search);
+  const [query, setQuery] = useState("");
+
+  const handleSearch = async () => {
+    await search({ name: query });
+  };
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search for movies..."
+      />
+      <button onClick={handleSearch}>Search</button>
+    </div>
   );
 }
 

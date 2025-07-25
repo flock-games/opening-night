@@ -10,6 +10,7 @@
 
 import type * as emails from "../emails.js";
 import type * as http from "../http.js";
+import type * as movies from "../movies.js";
 import type * as trailers from "../trailers.js";
 import type * as youtube from "../youtube.js";
 
@@ -30,6 +31,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   emails: typeof emails;
   http: typeof http;
+  movies: typeof movies;
   trailers: typeof trailers;
   youtube: typeof youtube;
 }>;

@@ -45,7 +45,7 @@ export const getLikes = action({
           })
           .forEach(async (item: any) => {
             ctx.runMutation(internal.trailers.create, {
-              id: item.id,
+              youtubeId: item.id,
               title: item.snippet.title,
               thumbnail: item.snippet.thumbnails.default.url,
               tags: item.snippet.tags || [],
