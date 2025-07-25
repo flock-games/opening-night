@@ -2,6 +2,9 @@ import { action } from "./_generated/server";
 import { createClerkClient } from "@clerk/backend";
 import { internal } from "./_generated/api";
 
+const yearRegex = /(\d{4})/;
+const dividerRegex = /[|:(-]/;
+
 export const getLikes = action({
   handler: async (ctx, args) => {
     const clerkClient = createClerkClient({

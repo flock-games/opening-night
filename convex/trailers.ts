@@ -1,5 +1,13 @@
-import { internalMutation, mutation } from "./_generated/server";
+import { internalMutation, query } from "./_generated/server";
 import { v } from "convex/values";
+
+export const fetch = query({
+  args: {},
+  handler: async (convexToJson, args) => {
+    const trailers = await convexToJson.db.query("trailers").collect();
+    return trailers;
+  },
+});
 
 export const create = internalMutation({
   args: {
