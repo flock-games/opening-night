@@ -5,7 +5,7 @@ import { internal } from "./_generated/api";
 const yearRegex = /(\d{4})/;
 const dividerRegex = /[|:(-]/;
 
-export const getLikes = action({
+export const syncLikes = action({
   handler: async (ctx, args) => {
     const clerkClient = createClerkClient({
       secretKey: process.env.CLERK_CLIENT_SECRET,

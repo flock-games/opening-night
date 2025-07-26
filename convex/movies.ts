@@ -1,9 +1,40 @@
 import { v } from "convex/values";
-import { internalAction, internalMutation } from "./_generated/server";
+import { internalAction, internalMutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 
 const apiRoot = "https://api.themoviedb.org/3";
+
+export const fetchUserMovies = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("User is not authenticated");
+    }
+
+    const userTrailers = await ctx.db
+      .query("userTrailers")
+      .withIndex("by_user_id", (q) => q.eq("userId", identity.subject))
+      .collect();
+
+    const trailers = await Promise.all(
+      userTrailers.map(async (userTrailer) => {
+        const trailer = await ctx.db.get(userTrailer.trailerId);
+        return trailer;
+      }),
+    ).then((trailers) => trailers.filter((trailer) => trailer !== null));
+
+    const movies = await Promise.all(
+      trailers.map(async (trailer) => {
+        if (!trailer?.movieId) return null;
+        return await ctx.db.get(trailer.movieId);
+      }),
+    ).then((movies) => movies.filter((movie) => movie !== null));
+
+    return movies;
+  },
+});
 
 export const search = internalAction({
   args: {

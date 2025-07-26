@@ -13,99 +13,114 @@ import { SignInButton, UserButton } from "@clerk/clerk-react";
 export default function App() {
   return (
     <>
-      <header className="sticky top-0 z-10 bg-light dark:bg-dark p-4 border-b-2 border-slate-200 dark:border-slate-800">
-        Opening Night - Get reminders for movies you forgot you wanted to see
+      <header className="sticky flex justify-between top-0 z-10 bg-light dark:bg-dark p-4 border-b-2 border-slate-200 dark:border-slate-800">
+        <div>
+          <h1>Opening Night</h1>
+          <em>Get reminders for movies you forgot you wanted to see</em>
+        </div>
+        <Authenticated>
+          <div className="flex items-center gap-4">
+            <SyncYoutubeLikes />
+            <UserButton
+              userProfileProps={{
+                additionalOAuthScopes: {
+                  google: ["https://www.googleapis.com/auth/youtube.readonly"],
+                },
+              }}
+            />
+          </div>
+        </Authenticated>
       </header>
       <main>
         <Unauthenticated>
           <SignInButton />
         </Unauthenticated>
         <Authenticated>
-          <UserButton
-            userProfileProps={{
-              additionalOAuthScopes: {
-                google: ["https://www.googleapis.com/auth/youtube.readonly"],
-              },
-            }}
-          />
-          <YouTubeVideos />
-          {/* <MovieSearch /> */}
-          <TrailersList />
+          <UserMovies />
         </Authenticated>
         <AuthLoading>
-          <p>Still loading</p>
+          <p>Loading...</p>
         </AuthLoading>
       </main>
     </>
   );
 }
 
-// function MovieSearch() {
-//   const search = useAction(api.movies.search);
-//   const [query, setQuery] = useState("");
+function UserMovies() {
+  const movies = useQuery(api.movies.fetchUserMovies);
+  if (!movies) return;
+  // Released movies should be shown with most recent first
+  const releasedMovies = movies
+    .filter((movie) => {
+      return new Date(movie.releaseDate) < new Date();
+    })
+    .sort((a, b) => {
+      return (
+        new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime()
+      );
+    });
 
-//   const handleSearch = async () => {
-//     await search({ name: query });
-//   };
-
-//   return (
-//     <div>
-//       <input
-//         type="text"
-//         value={query}
-//         onChange={(e) => setQuery(e.target.value)}
-//         placeholder="Search for movies..."
-//       />
-//       <button onClick={handleSearch}>Search</button>
-//     </div>
-//   );
-// }
-
-function TrailersList() {
-  const trailers = useQuery(api.trailers.fetch);
+  // Upcoming movies should be shown with closest to release first
+  const upcomingMovies = movies
+    .filter((movie) => {
+      return new Date(movie.releaseDate) >= new Date();
+    })
+    .sort((a, b) => {
+      return (
+        new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime()
+      );
+    });
   return (
     <div>
-      {trailers?.map((trailer) => (
-        <div key={trailer._id} className="flex gap-2 p-4 border-b">
-          <div className="w-64">{trailer.parsedTitle}</div>
-          <div>
-            {"movieData" in trailer && trailer.movieData && (
-              <p>
-                <strong>Movie:</strong> {trailer.movieData.title} (
-                {trailer.movieData.releaseDate})
-              </p>
-            )}
+      <h2>Upcoming</h2>
+      <div className="flex flex-wrap gap-4">
+        {upcomingMovies.map((movie) => (
+          <div className="w-48" key={movie._id}>
+            <MovieTile movie={movie} />
           </div>
-          <div>
-            <img src={trailer.thumbnail} alt={trailer.title} />
-            <em>{trailer.title}</em>
-            <br />
-            <a
-              href={`https://www.youtube.com/watch?v=${trailer.youtubeId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Watch Trailer
-            </a>
+        ))}
+      </div>
+      <h2>Out Now</h2>
+      <div className="flex flex-wrap gap-4">
+        {releasedMovies.map((movie) => (
+          <div className="w-48" key={movie._id}>
+            <MovieTile movie={movie} />
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
 
-function YouTubeVideos() {
-  const getLikes = useAction(api.youtube.getLikes);
+function MovieTile({ movie }: { movie: any }) {
+  return (
+    <div className="flex flex-col gap-2 p-4">
+      <a
+        href={`https://www.themoviedb.org/movie/${movie.tmdbId}`}
+        target="_blank"
+      >
+        <img
+          src={`https://image.tmdb.org/t/p/w500/${movie.posterPath}`}
+          alt={movie.title}
+        />
+        {movie.title}
+      </a>
+      <div>{movie.releaseDate}</div>
+      <div>{movie.overview}</div>
+    </div>
+  );
+}
 
-  const fetchVideos = async () => {
-    // Fetch videos from YouTube API
-    const res = await getLikes({});
-    console.log("Fetched videos:", res);
+function SyncYoutubeLikes() {
+  const syncLikes = useAction(api.youtube.syncLikes);
+
+  const sync = () => {
+    syncLikes({});
   };
 
   return (
     <div>
-      <button onClick={() => fetchVideos()}>Fetch</button>
+      <button onClick={() => sync()}>Sync</button>
     </div>
   );
 }
