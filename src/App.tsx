@@ -9,7 +9,6 @@ import {
 } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
-import { useState } from "react";
 
 export default function App() {
   return (
@@ -65,11 +64,25 @@ export default function App() {
 function TrailersList() {
   const trailers = useQuery(api.trailers.fetch);
   return (
-    <ul>
+    <div>
       {trailers?.map((trailer) => (
-        <li key={trailer.id}>{trailer.title}</li>
+        <div key={trailer._id} className="flex gap-2 p-4 border-b">
+          <div className="w-64">{trailer.parsedTitle}</div>
+          <div>
+            <img src={trailer.thumbnail} alt={trailer.title} />
+            <em>{trailer.title}</em>
+            <br />
+            <a
+              href={`https://www.youtube.com/watch?v=${trailer.youtubeId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Watch Trailer
+            </a>
+          </div>
+        </div>
       ))}
-    </ul>
+    </div>
   );
 }
 

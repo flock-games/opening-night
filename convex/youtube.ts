@@ -44,30 +44,36 @@ export const getLikes = action({
             return title.includes("trailer") || title.includes("teaser");
           })
           .forEach(async (item: any) => {
-            ctx.runMutation(internal.trailers.create, {
-              youtubeId: item.id,
-              title: item.snippet.title,
-              thumbnail: item.snippet.thumbnails.default.url,
-              tags: item.snippet.tags || [],
-              categoryId: item.snippet.categoryId,
-            });
-
             let year: string | undefined;
             const yearMatch = item.snippet.title.match(yearRegex);
             if (yearMatch) {
               year = yearMatch[0];
             }
 
-            let title = item.snippet.title
+            const parsedTitle = item.snippet.title
               .split(dividerRegex)[0]
               .trim()
-              .replace(/ trailer/i, "")
-              .replace(/ teaser/i, "")
-              .replace(/ official/i, "");
+              .replace(/trailer/i, "")
+              .replace(/teaser/i, "")
+              .replace(/official/i, "");
 
-            ctx.runAction(internal.movies.search, {
-              name: title,
+            const movieId = await ctx.runAction(internal.movies.search, {
+              name: parsedTitle,
               year: year,
+            });
+
+            const trailerId = await ctx.runMutation(internal.trailers.create, {
+              youtubeId: item.id,
+              movieId: movieId ?? undefined,
+              title: item.snippet.title,
+              parsedTitle: parsedTitle,
+              thumbnail: item.snippet.thumbnails.default.url,
+              tags: item.snippet.tags || [],
+              categoryId: item.snippet.categoryId,
+            });
+
+            await ctx.runMutation(internal.trailers.createUserTrailer, {
+              trailerId,
             });
           });
       }

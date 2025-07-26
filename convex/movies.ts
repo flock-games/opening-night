@@ -1,6 +1,7 @@
 import { v } from "convex/values";
-import { action, internalAction, internalMutation } from "./_generated/server";
+import { internalAction, internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
+import { Id } from "./_generated/dataModel";
 
 const apiRoot = "https://api.themoviedb.org/3";
 
@@ -35,7 +36,7 @@ export const search = internalAction({
       (a: any, b: any) => b.popularity - a.popularity,
     )[0];
 
-    await ctx.runMutation(internal.movies.create, {
+    const id: Id<"movies"> = await ctx.runMutation(internal.movies.create, {
       tmdbId: `${bestMatch.id}`,
       title: bestMatch.title,
       releaseDate: bestMatch.release_date,
@@ -43,7 +44,7 @@ export const search = internalAction({
       posterPath: bestMatch.poster_path,
     });
 
-    return bestMatch;
+    return id;
   },
 });
 
@@ -52,15 +53,13 @@ export const create = internalMutation({
     tmdbId: v.string(),
     title: v.string(),
     releaseDate: v.optional(v.string()),
-    thumbnail: v.optional(v.string()),
     overview: v.optional(v.string()),
     posterPath: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
-    const { tmdbId, title, releaseDate, thumbnail, overview, posterPath } =
-      args;
+  handler: async (ctx, args): Promise<Id<"movies">> => {
+    const { tmdbId, title, releaseDate, overview, posterPath } = args;
 
-    await ctx.db.insert("movies", {
+    const id = await ctx.db.insert("movies", {
       tmdbId,
       title,
       releaseDate: releaseDate ?? "",
@@ -68,6 +67,6 @@ export const create = internalMutation({
       posterPath: posterPath ?? "",
     });
 
-    return { success: true };
+    return id;
   },
 });

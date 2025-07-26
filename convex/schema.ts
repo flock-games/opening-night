@@ -4,12 +4,13 @@ import { v } from "convex/values";
 export default defineSchema({
   trailers: defineTable({
     youtubeId: v.string(),
+    movieId: v.optional(v.id("movies")),
     title: v.string(),
+    parsedTitle: v.string(),
     thumbnail: v.string(),
     tags: v.array(v.string()),
     categoryId: v.string(),
-    userId: v.string(),
-  }),
+  }).index("by_youtube_id", ["youtubeId"]),
   movies: defineTable({
     tmdbId: v.string(),
     title: v.string(),
@@ -17,7 +18,9 @@ export default defineSchema({
     overview: v.string(),
     posterPath: v.string(),
   }),
-  // user trailers
+  userTrailers: defineTable({
+    userId: v.string(),
+    trailerId: v.id("trailers"),
+  }).index("by_user_id", ["userId"]),
   // user searches
-  // yt <-> tmdb mapping
 });
