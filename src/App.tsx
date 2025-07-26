@@ -30,7 +30,7 @@ export default function App() {
             }}
           />
           <YouTubeVideos />
-          <MovieSearch />
+          {/* <MovieSearch /> */}
           <TrailersList />
         </Authenticated>
         <AuthLoading>
@@ -41,26 +41,26 @@ export default function App() {
   );
 }
 
-function MovieSearch() {
-  const search = useAction(api.movies.search);
-  const [query, setQuery] = useState("");
+// function MovieSearch() {
+//   const search = useAction(api.movies.search);
+//   const [query, setQuery] = useState("");
 
-  const handleSearch = async () => {
-    await search({ name: query });
-  };
+//   const handleSearch = async () => {
+//     await search({ name: query });
+//   };
 
-  return (
-    <div>
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search for movies..."
-      />
-      <button onClick={handleSearch}>Search</button>
-    </div>
-  );
-}
+//   return (
+//     <div>
+//       <input
+//         type="text"
+//         value={query}
+//         onChange={(e) => setQuery(e.target.value)}
+//         placeholder="Search for movies..."
+//       />
+//       <button onClick={handleSearch}>Search</button>
+//     </div>
+//   );
+// }
 
 function TrailersList() {
   const trailers = useQuery(api.trailers.fetch);

@@ -51,6 +51,24 @@ export const getLikes = action({
               tags: item.snippet.tags || [],
               categoryId: item.snippet.categoryId,
             });
+
+            let year: string | undefined;
+            const yearMatch = item.snippet.title.match(yearRegex);
+            if (yearMatch) {
+              year = yearMatch[0];
+            }
+
+            let title = item.snippet.title
+              .split(dividerRegex)[0]
+              .trim()
+              .replace(/ trailer/i, "")
+              .replace(/ teaser/i, "")
+              .replace(/ official/i, "");
+
+            ctx.runAction(internal.movies.search, {
+              name: title,
+              year: year,
+            });
           });
       }
       if ("nextPageToken" in data && data.nextPageToken !== pageToken) {

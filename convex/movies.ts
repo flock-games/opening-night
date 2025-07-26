@@ -1,10 +1,10 @@
 import { v } from "convex/values";
-import { action, internalMutation } from "./_generated/server";
+import { action, internalAction, internalMutation } from "./_generated/server";
 import { internal } from "./_generated/api";
 
 const apiRoot = "https://api.themoviedb.org/3";
 
-export const search = action({
+export const search = internalAction({
   args: {
     name: v.string(),
     year: v.optional(v.string()),
@@ -27,7 +27,7 @@ export const search = action({
     }
     const data = await response.json();
     if (!data || !data.results || data.results.length === 0) {
-      throw new Error("No results found");
+      return null;
     }
 
     // Sort data by popularity
