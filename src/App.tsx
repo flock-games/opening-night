@@ -69,6 +69,14 @@ function TrailersList() {
         <div key={trailer._id} className="flex gap-2 p-4 border-b">
           <div className="w-64">{trailer.parsedTitle}</div>
           <div>
+            {"movieData" in trailer && trailer.movieData && (
+              <p>
+                <strong>Movie:</strong> {trailer.movieData.title} (
+                {trailer.movieData.releaseDate})
+              </p>
+            )}
+          </div>
+          <div>
             <img src={trailer.thumbnail} alt={trailer.title} />
             <em>{trailer.title}</em>
             <br />

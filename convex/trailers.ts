@@ -4,9 +4,33 @@ import { v } from "convex/values";
 
 export const fetch = query({
   args: {},
-  handler: async (convexToJson, args) => {
-    const trailers = await convexToJson.db.query("trailers").collect();
-    return trailers;
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("User is not authenticated");
+    }
+
+    const userTrailers = await ctx.db
+      .query("userTrailers")
+      .withIndex("by_user_id", (q) => q.eq("userId", identity.subject))
+      .collect();
+
+    const trailers = await Promise.all(
+      userTrailers.map(async (userTrailer) => {
+        const trailer = await ctx.db.get(userTrailer.trailerId);
+        return trailer;
+      }),
+    ).then((trailers) => trailers.filter((trailer) => trailer !== null));
+
+    const trailersWithMovies = await Promise.all(
+      trailers.map(async (trailer) => {
+        if (!trailer?.movieId) return trailer;
+        const movie = await ctx.db.get(trailer.movieId);
+        return { ...trailer, movieData: movie };
+      }),
+    );
+
+    return trailersWithMovies;
   },
 });
 
