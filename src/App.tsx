@@ -15,10 +15,9 @@ import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
 export default function App() {
   return (
     <>
-      <header className="sticky flex justify-between top-0 z-10 bg-light dark:bg-dark p-4 border-b-2 border-slate-200 dark:border-slate-800">
+      <header className="sticky flex justify-between top-0 z-10 bg-light dark:bg-dark px-4 lg:px-8 py-4">
         <div>
-          <h1>Opening Night</h1>
-          <em>Get reminders for movies you forgot you wanted to see</em>
+          <h1 className="text-2xl font-black text-amber-300">Opening Night</h1>
         </div>
         <Authenticated>
           <div className="flex items-center gap-4">
@@ -77,35 +76,35 @@ function UserMovies() {
       );
     });
   return (
-    <div>
-      <h2>
+    <div className="my-4 mx-4 lg:mx-auto lg:w-3/4">
+      <h2 className="mb-4 text-2xl font-black">
         {" "}
         <FontAwesomeIcon
-          className="cursor-pointer"
-          size="xl"
+          className="mr-2"
+          size="lg"
           icon={byPrefixAndName.faslr["calendar"]}
         />
         Coming Soon
       </h2>
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 bg-stone-800 rounded-lg mb-12 p-2">
         {upcomingMovies.map((movie) => (
           <div className="w-48" key={movie._id}>
-            <MovieTile movie={movie} />
+            <MovieCard movie={movie} includeDate={true} />
           </div>
         ))}
       </div>
-      <h2>
+      <h2 className="mb-4 text-2xl font-black">
         <FontAwesomeIcon
-          className="cursor-pointer"
-          size="xl"
+          className="mr-2"
+          size="lg"
           icon={byPrefixAndName.faslr["tv"]}
         />
         Released
       </h2>
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 bg-stone-800 rounded-lg mb-12 p-2">
         {releasedMovies.map((movie) => (
           <div className="w-48" key={movie._id}>
-            <MovieTile movie={movie} />
+            <MovieCard movie={movie} includeDate={false} />
           </div>
         ))}
       </div>
@@ -113,9 +112,21 @@ function UserMovies() {
   );
 }
 
-function MovieTile({ movie }: { movie: any }) {
+function MovieCard({
+  movie,
+  includeDate,
+}: {
+  movie: any;
+  includeDate?: boolean;
+}) {
+  const displayDate = new Date(movie.releaseDate).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
   return (
-    <div className="flex flex-col gap-2 p-4">
+    <div className="p-2">
       <a
         href={`https://www.themoviedb.org/movie/${movie.tmdbId}`}
         target="_blank"
@@ -123,11 +134,12 @@ function MovieTile({ movie }: { movie: any }) {
         <img
           src={`https://image.tmdb.org/t/p/w500/${movie.posterPath}`}
           alt={movie.title}
+          className="mb-2 rounded-lg shadow-lg"
         />
-        {movie.title}
+        <h3 className="text-lg font-semibold line-clamp-1">{movie.title}</h3>
       </a>
-      <div>{movie.releaseDate}</div>
-      <div>{movie.overview}</div>
+      {includeDate && <p className="text-md font-regular">{displayDate}</p>}
+      <p className="text-sm text-stone-400 line-clamp-3">{movie.overview}</p>
     </div>
   );
 }
