@@ -21,6 +21,7 @@ export default defineSchema({
   userTrailers: defineTable({
     userId: v.string(),
     trailerId: v.id("trailers"),
+    dismissed: v.optional(v.boolean()),
   }).index("by_user_id", ["userId"]),
   youtubeSyncs: defineTable({
     userId: v.string(),

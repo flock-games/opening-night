@@ -16,19 +16,23 @@ export const fetchUserMovies = query({
     const userTrailers = await ctx.db
       .query("userTrailers")
       .withIndex("by_user_id", (q) => q.eq("userId", identity.subject))
+      .filter((q) => q.neq(q.field("dismissed"), true))
       .collect();
 
     const trailers = await Promise.all(
       userTrailers.map(async (userTrailer) => {
         const trailer = await ctx.db.get(userTrailer.trailerId);
-        return trailer;
+        if (!trailer) return null;
+        return { ...trailer, userTrailerId: userTrailer._id };
       }),
     ).then((trailers) => trailers.filter((trailer) => trailer !== null));
 
     const movies = await Promise.all(
       trailers.map(async (trailer) => {
         if (!trailer?.movieId) return null;
-        return await ctx.db.get(trailer.movieId);
+        const movie = await ctx.db.get(trailer.movieId);
+        if (!movie) return null;
+        return { ...movie, userTrailerId: trailer.userTrailerId };
       }),
     ).then((movies) => movies.filter((movie) => movie !== null));
 

@@ -5,6 +5,7 @@ import {
   AuthLoading,
   Unauthenticated,
   useAction,
+  useMutation,
   useQuery,
 } from "convex/react";
 import { api } from "../convex/_generated/api";
@@ -124,6 +125,7 @@ function MovieCard({
   movie: any;
   includeDate?: boolean;
 }) {
+  const dismiss = useMutation(api.trailers.dismissUserTrailer);
   const displayDate = new Date(movie.releaseDate).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -131,18 +133,23 @@ function MovieCard({
   });
 
   return (
-    <div className="p-2 hover:bg-stone-700 transition-all duration-200 rounded-lg hover:scale-105">
-      <a
-        href={`https://www.themoviedb.org/movie/${movie.tmdbId}`}
-        target="_blank"
-      >
-        <img
-          src={`https://image.tmdb.org/t/p/w500/${movie.posterPath}`}
-          alt={movie.title}
-          className="mb-2 rounded-lg shadow-lg"
+    <div className="p-2 group cursor-pointer hover:bg-stone-700 transition-all duration-200 rounded-lg hover:scale-105 relative">
+      <div className="hidden group-hover:block rounded-full bg-stone-800 hover:bg-rose-500 absolute bottom-2 right-2 p-1">
+        <FontAwesomeIcon
+          onClick={() => dismiss({ userTrailerId: movie.userTrailerId })}
+          className="text-stone-400 hover:text-white transition-colors duration-200 cursor-pointer"
+          size="lg"
+          icon={byPrefixAndName.faslr["trash"]}
         />
-        <h3 className="text-lg font-semibold line-clamp-1">{movie.title}</h3>
-      </a>
+      </div>
+
+      <img
+        src={`https://image.tmdb.org/t/p/w500/${movie.posterPath}`}
+        alt={movie.title}
+        className="mb-2 rounded-lg shadow-lg"
+      />
+      <h3 className="text-lg font-semibold line-clamp-1">{movie.title}</h3>
+
       {includeDate && <p className="text-md font-regular">{displayDate}</p>}
       <p className="text-sm text-stone-400 line-clamp-4">{movie.overview}</p>
     </div>

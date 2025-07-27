@@ -1,5 +1,5 @@
 import { Id } from "./_generated/dataModel";
-import { internalMutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const create = internalMutation({
@@ -55,6 +55,29 @@ export const createUserTrailer = internalMutation({
     return await ctx.db.insert("userTrailers", {
       userId: identity.subject,
       trailerId,
+      dismissed: false,
+    });
+  },
+});
+
+export const dismissUserTrailer = mutation({
+  args: {
+    userTrailerId: v.id("userTrailers"),
+  },
+  handler: async (ctx, args) => {
+    const { userTrailerId } = args;
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("User is not authenticated");
+    }
+    const userTrailer = await ctx.db.get(userTrailerId);
+    if (!userTrailer || userTrailer.userId !== identity.subject) {
+      throw new Error("User trailer not found or user not authorized");
+    }
+
+    // Dismiss the user trailer entry
+    await ctx.db.patch(userTrailer._id, {
+      dismissed: true,
     });
   },
 });
