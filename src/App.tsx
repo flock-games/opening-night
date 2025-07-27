@@ -9,6 +9,8 @@ import {
 } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
 
 export default function App() {
   return (
@@ -21,6 +23,7 @@ export default function App() {
         <Authenticated>
           <div className="flex items-center gap-4">
             <SyncYoutubeLikes />
+
             <UserButton
               userProfileProps={{
                 additionalOAuthScopes: {
@@ -75,7 +78,15 @@ function UserMovies() {
     });
   return (
     <div>
-      <h2>Upcoming</h2>
+      <h2>
+        {" "}
+        <FontAwesomeIcon
+          className="cursor-pointer"
+          size="xl"
+          icon={byPrefixAndName.faslr["calendar"]}
+        />
+        Coming Soon
+      </h2>
       <div className="flex flex-wrap gap-4">
         {upcomingMovies.map((movie) => (
           <div className="w-48" key={movie._id}>
@@ -83,7 +94,14 @@ function UserMovies() {
           </div>
         ))}
       </div>
-      <h2>Out Now</h2>
+      <h2>
+        <FontAwesomeIcon
+          className="cursor-pointer"
+          size="xl"
+          icon={byPrefixAndName.faslr["tv"]}
+        />
+        Released
+      </h2>
       <div className="flex flex-wrap gap-4">
         {releasedMovies.map((movie) => (
           <div className="w-48" key={movie._id}>
@@ -123,7 +141,12 @@ function SyncYoutubeLikes() {
 
   return (
     <div>
-      <button onClick={() => sync()}>Sync</button>
+      <FontAwesomeIcon
+        onClick={() => sync()}
+        className="cursor-pointer"
+        size="xl"
+        icon={byPrefixAndName.faslr["arrows-rotate"]}
+      />
     </div>
   );
 }

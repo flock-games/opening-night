@@ -13,9 +13,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@awesome.me/kit-2f975920ad": "^1.0.4",
     "@clerk/backend": "^2.5.1",
     "@clerk/clerk-react": "^5.35.4",
     "@convex-dev/resend": "^0.1.5",
+    "@fortawesome/fontawesome-svg-core": "^7.0.0",
+    "@fortawesome/react-fontawesome": "^0.2.3",
     "convex": "^1.23.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
