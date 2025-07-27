@@ -1,12 +1,49 @@
-import { action } from "./_generated/server";
+import { action, internalMutation } from "./_generated/server";
 import { createClerkClient } from "@clerk/backend";
 import { internal } from "./_generated/api";
+import { v } from "convex/values";
 
 const yearRegex = /(\d{4})/;
 const dividerRegex = /[|:(-]/;
 
+export const createSync = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("User is not authenticated");
+    }
+    const id = await ctx.db.insert("youtubeSyncs", {
+      userId: identity.subject,
+      status: "requested",
+    });
+    return id;
+  },
+});
+
+export const updateSync = internalMutation({
+  args: {
+    id: v.id("youtubeSyncs"),
+    status: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { id, status } = args;
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("User is not authenticated");
+    }
+    const sync = await ctx.db.get(id);
+    if (!sync || sync.userId !== identity.subject) {
+      throw new Error("Sync not found or user not authorized");
+    }
+    return await ctx.db.patch(id, { status });
+  },
+});
+
 export const syncLikes = action({
   handler: async (ctx, args) => {
+    const syncId = await ctx.runMutation(internal.youtube.createSync, {});
+
     const clerkClient = createClerkClient({
       secretKey: process.env.CLERK_CLIENT_SECRET,
     });
@@ -25,6 +62,10 @@ export const syncLikes = action({
     let pageToken = undefined;
     let page = 1;
     do {
+      await ctx.runMutation(internal.youtube.updateSync, {
+        id: syncId,
+        status: `Syncing page ${page}`,
+      });
       let url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&myRating=like&maxResults=50`;
       if (pageToken) {
         url += `&pageToken=${pageToken}`;
@@ -84,6 +125,10 @@ export const syncLikes = action({
         pageToken = undefined;
       }
     } while (pageToken !== undefined && page < 100);
+    await ctx.runMutation(internal.youtube.updateSync, {
+      id: syncId,
+      status: "done",
+    });
     return "done";
   },
 });

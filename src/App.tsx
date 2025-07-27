@@ -49,6 +49,9 @@ export default function App() {
 function UserMovies() {
   const movies = useQuery(api.movies.fetchUserMovies);
   if (!movies) return;
+  if (!movies.length) {
+    return <p>No movies found.</p>;
+  }
   // Released movies should be shown with most recent first
   const releasedMovies = movies
     .filter((movie) => {
