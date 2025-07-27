@@ -1,5 +1,6 @@
+import { v } from "convex/values";
 import { components, internal } from "./_generated/api";
-import { internalMutation } from "./_generated/server";
+import { internalMutation, mutation } from "./_generated/server";
 import { vEmailId, vEmailEvent, Resend } from "@convex-dev/resend";
 
 export const resend: Resend = new Resend(components.resend, {
@@ -7,13 +8,14 @@ export const resend: Resend = new Resend(components.resend, {
   onEmailEvent: internal.emails.handleEmailEvent,
 });
 
-export const sendTestEmail = internalMutation({
-  handler: async (ctx) => {
+export const sendSuggestionDismissedEmail = mutation({
+  args: { userTrailerId: v.id("userTrailers") },
+  handler: async (ctx, args) => {
     await resend.sendEmail(ctx, {
       from: "Test <onboarding@resend.dev>",
       to: "tyler@flock.games",
-      subject: "Hi there",
-      html: "This is a test email",
+      subject: "Suggestion dismissed",
+      html: `The suggestion "${args.userTrailerId}" was dismissed.`,
     });
   },
 });

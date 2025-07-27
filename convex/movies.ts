@@ -13,11 +13,14 @@ export const fetchUserMovies = query({
       throw new Error("User is not authenticated");
     }
 
-    const userTrailers = await ctx.db
+    let userTrailers = await ctx.db
       .query("userTrailers")
       .withIndex("by_user_id", (q) => q.eq("userId", identity.subject))
-      .filter((q) => q.neq(q.field("dismissed"), true))
       .collect();
+
+    userTrailers = userTrailers.filter(
+      (userTrailer) => userTrailer.dismissed !== true,
+    );
 
     const trailers = await Promise.all(
       userTrailers.map(async (userTrailer) => {

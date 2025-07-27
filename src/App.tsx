@@ -126,17 +126,26 @@ function MovieCard({
   includeDate?: boolean;
 }) {
   const dismiss = useMutation(api.trailers.dismissUserTrailer);
+  const sendDismissedEmail = useMutation(
+    api.emails.sendSuggestionDismissedEmail,
+  );
+
   const displayDate = new Date(movie.releaseDate).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
+  const dismissSuggestion = async () => {
+    await dismiss({ userTrailerId: movie.userTrailerId });
+    await sendDismissedEmail({ userTrailerId: movie.userTrailerId });
+  };
+
   return (
     <div className="p-2 group cursor-pointer hover:bg-stone-700 transition-all duration-200 rounded-lg hover:scale-105 relative">
       <div className="hidden group-hover:block rounded-full bg-stone-800 hover:bg-rose-500 absolute bottom-2 right-2 p-1">
         <FontAwesomeIcon
-          onClick={() => dismiss({ userTrailerId: movie.userTrailerId })}
+          onClick={() => dismissSuggestion()}
           className="text-stone-400 hover:text-white transition-colors duration-200 cursor-pointer"
           size="lg"
           icon={byPrefixAndName.faslr["trash"]}
