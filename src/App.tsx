@@ -76,35 +76,40 @@ function UserMovies() {
       );
     });
   return (
-    <div className="my-4 mx-4 lg:mx-auto lg:w-3/4">
+    <div className="my-4 mx-4 lg:mx-auto max-2-2xl">
+      <MovieSection
+        title="Coming Soon"
+        icon="calendar"
+        movies={upcomingMovies}
+      />
+      <MovieSection title="Released" icon="tv" movies={releasedMovies} />
+    </div>
+  );
+}
+
+function MovieSection({
+  title,
+  icon,
+  movies,
+}: {
+  title: string;
+  icon: string;
+  movies: any[];
+}) {
+  return (
+    <div className="mb-4 mx-4 lg:mx-auto lg:max-w-4xl">
       <h2 className="mb-4 text-2xl font-black">
-        {" "}
         <FontAwesomeIcon
           className="mr-2"
           size="lg"
-          icon={byPrefixAndName.faslr["calendar"]}
+          icon={byPrefixAndName.faslr[icon]}
         />
-        Coming Soon
+        {title}
       </h2>
-      <div className="flex flex-wrap gap-4 bg-stone-800 rounded-lg mb-12 p-2">
-        {upcomingMovies.map((movie) => (
-          <div className="w-48" key={movie._id}>
+      <div className="flex flex-wrap bg-stone-800 rounded-lg mb-12 py-2 px-1 gap-y-4">
+        {movies.map((movie) => (
+          <div className="w-1/2 md:w-1/4 lg:w-1/5 px-2" key={movie._id}>
             <MovieCard movie={movie} includeDate={true} />
-          </div>
-        ))}
-      </div>
-      <h2 className="mb-4 text-2xl font-black">
-        <FontAwesomeIcon
-          className="mr-2"
-          size="lg"
-          icon={byPrefixAndName.faslr["tv"]}
-        />
-        Released
-      </h2>
-      <div className="flex flex-wrap gap-4 bg-stone-800 rounded-lg mb-12 p-2">
-        {releasedMovies.map((movie) => (
-          <div className="w-48" key={movie._id}>
-            <MovieCard movie={movie} includeDate={false} />
           </div>
         ))}
       </div>
@@ -126,7 +131,7 @@ function MovieCard({
   });
 
   return (
-    <div className="p-2">
+    <div className="p-2 hover:bg-stone-700 transition-all duration-200 rounded-lg hover:scale-105">
       <a
         href={`https://www.themoviedb.org/movie/${movie.tmdbId}`}
         target="_blank"
@@ -139,7 +144,7 @@ function MovieCard({
         <h3 className="text-lg font-semibold line-clamp-1">{movie.title}</h3>
       </a>
       {includeDate && <p className="text-md font-regular">{displayDate}</p>}
-      <p className="text-sm text-stone-400 line-clamp-3">{movie.overview}</p>
+      <p className="text-sm text-stone-400 line-clamp-4">{movie.overview}</p>
     </div>
   );
 }
@@ -155,7 +160,7 @@ function SyncYoutubeLikes() {
     <div>
       <FontAwesomeIcon
         onClick={() => sync()}
-        className="cursor-pointer"
+        className="cursor-pointer hover:rotate-180 transition-transform duration-300"
         size="xl"
         icon={byPrefixAndName.faslr["arrows-rotate"]}
       />
