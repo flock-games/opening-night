@@ -33,19 +33,47 @@ export default function App() {
             />
           </div>
         </Authenticated>
-      </header>
-      <main>
         <Unauthenticated>
           <SignInButton />
         </Unauthenticated>
+      </header>
+      <main>
         <Authenticated>
           <UserMovies />
         </Authenticated>
+        <Unauthenticated>
+          <LandingPage />
+        </Unauthenticated>
         <AuthLoading>
-          <p>Loading...</p>
+          <Loading />
         </AuthLoading>
       </main>
     </>
+  );
+}
+
+function Loading() {
+  return (
+    <div className="my-4 mx-4 lg:mx-auto max-w-2xl">
+      <h2 className="text-2xl mt-16 mb-8 font-black">Loading...</h2>
+    </div>
+  );
+}
+
+function LandingPage() {
+  return (
+    <div className="my-4 mx-4 lg:mx-auto max-w-2xl">
+      <h2 className="text-2xl mt-16 mb-8 font-black">
+        Find movies you want to see with{" "}
+        <span className="text-amber-300">Opening Night</span>
+      </h2>
+      <p className="mb-4">
+        Opening Night is a movie discovery app that helps you find upcoming and
+        released movies based on trailers you liked on YouTube. Easily set
+        reminders and we'll email you when the movie is about to be released.
+      </p>
+      <p className="mb-4">Sign in with Google to get started!</p>
+    </div>
   );
 }
 
@@ -53,7 +81,7 @@ function UserMovies() {
   const movies = useQuery(api.movies.fetchUserMovies);
   if (!movies) return;
   if (!movies.length) {
-    return <p>No movies found.</p>;
+    return <NoUserMovies />;
   }
   // Released movies should be shown with most recent first
   const releasedMovies = movies
@@ -84,6 +112,22 @@ function UserMovies() {
         movies={upcomingMovies}
       />
       <MovieSection title="Released" icon="tv" movies={releasedMovies} />
+    </div>
+  );
+}
+
+function NoUserMovies() {
+  return (
+    <div className="my-4 mx-4 lg:mx-auto max-2-2xl">
+      <div className="mb-4 mx-4 lg:mx-auto lg:max-w-4xl text-center">
+        <h2 className="text-2xl mt-16 mb-8 font-black">No movies yet...</h2>
+        <SyncYoutubeLikes />
+        <p className=" mb-2">Try syncing your YouTube likes.</p>
+        <p className="text-stone-400 text-sm">
+          Opening Night is still in beta. If it fails to identify movies that
+          should be here, please let us know!
+        </p>
+      </div>
     </div>
   );
 }
