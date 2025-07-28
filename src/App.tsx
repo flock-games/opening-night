@@ -12,6 +12,7 @@ import { api } from "../convex/_generated/api";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
+import { useState } from "react";
 
 export default function App() {
   return (
@@ -110,6 +111,7 @@ function UserMovies() {
         title="Coming Soon"
         icon="calendar"
         movies={upcomingMovies}
+        includeDate={true}
       />
       <MovieSection title="Released" icon="tv" movies={releasedMovies} />
     </div>
@@ -136,14 +138,27 @@ function MovieSection({
   title,
   icon,
   movies,
+  includeDate = false,
 }: {
   title: string;
   icon: string;
   movies: any[];
+  includeDate?: boolean;
 }) {
+  // Use state to keep track of an expanded movie
+  const [expandedMovie, setExpandedMovie] = useState<string | null>(null);
+
+  const movieClicked = (movieId: string) => {
+    if (expandedMovie === movieId) {
+      setExpandedMovie(null);
+    } else {
+      setExpandedMovie(movieId);
+    }
+  };
+
   return (
     <div className="mb-4 mx-4 lg:mx-auto lg:max-w-4xl">
-      <h2 className="mb-4 text-2xl font-black">
+      <h2 className="mb-2 text-2xl font-black">
         <FontAwesomeIcon
           className="mr-2"
           size="lg"
@@ -153,8 +168,16 @@ function MovieSection({
       </h2>
       <div className="flex flex-wrap bg-stone-800 rounded-lg mb-12 py-2 px-1 gap-y-4">
         {movies.map((movie) => (
-          <div className="w-1/2 md:w-1/4 lg:w-1/5 px-2" key={movie._id}>
-            <MovieCard movie={movie} includeDate={true} />
+          <div
+            onClick={() => movieClicked(movie._id)}
+            className={`px-2 transition-all  ${
+              expandedMovie === movie._id
+                ? "w-full px-none"
+                : "w-1/2 md:w-1/4 lg:w-1/5"
+            }`}
+            key={movie._id}
+          >
+            <MovieCard movie={movie} includeDate={includeDate} />
           </div>
         ))}
       </div>
@@ -187,10 +210,10 @@ function MovieCard({
 
   return (
     <div className="p-2 group cursor-pointer hover:bg-stone-700 transition-all duration-200 rounded-lg hover:scale-105 relative">
-      <div className="hidden group-hover:block rounded-full bg-stone-800 hover:bg-rose-500 absolute bottom-2 right-2 p-1">
+      <div className="hidden group-hover:block rounded-full bg-stone-800 hover:bg-rose-500 text-stone-400 hover:text-white absolute bottom-2 right-2 p-1">
         <FontAwesomeIcon
           onClick={() => dismissSuggestion()}
-          className="text-stone-400 hover:text-white transition-colors duration-200 cursor-pointer"
+          className=" transition-colors duration-200 cursor-pointer"
           size="lg"
           icon={byPrefixAndName.faslr["trash"]}
         />
