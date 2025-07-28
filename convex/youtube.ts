@@ -1,6 +1,6 @@
-import { action, internalMutation } from "./_generated/server";
+import { action, query, internalMutation } from "./_generated/server";
 import { createClerkClient } from "@clerk/backend";
-import { internal } from "./_generated/api";
+import { internal, api } from "./_generated/api";
 import { v } from "convex/values";
 
 const yearRegex = /(\d{4})/;
@@ -18,6 +18,24 @@ export const createSync = internalMutation({
       status: "requested",
     });
     return id;
+  },
+});
+
+export const getMostRecentSyncTs = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("User is not authenticated");
+    }
+    const syncs = await ctx.db
+      .query("youtubeSyncs")
+      .withIndex("by_user_id", (q) => q.eq("userId", identity.subject))
+      .collect();
+    if (syncs.length === 0) {
+      return null;
+    }
+    return syncs[syncs.length - 1]._creationTime;
   },
 });
 
@@ -42,23 +60,28 @@ export const updateSync = internalMutation({
 
 export const syncLikes = action({
   handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("User is not authenticated");
+    }
+    const existingUserTrailers = await ctx.runQuery(
+      internal.trailers.getUserTrailers,
+      {},
+    );
     const syncId = await ctx.runMutation(internal.youtube.createSync, {});
 
     const clerkClient = createClerkClient({
       secretKey: process.env.CLERK_CLIENT_SECRET,
     });
 
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new Error("User is not authenticated");
-    }
     const clerkResponse = await clerkClient.users.getUserOauthAccessToken(
       identity.subject,
       "google",
     );
     const accessToken = clerkResponse.data[0].token;
 
+    let doneSyncing = false;
     let pageToken = undefined;
     let page = 1;
     do {
@@ -85,6 +108,26 @@ export const syncLikes = action({
             return title.includes("trailer") || title.includes("teaser");
           })
           .forEach(async (item: any) => {
+            const existingTrailer = await ctx.runQuery(
+              internal.trailers.getByYoutubeId,
+              { youtubeId: item.id },
+            );
+            if (existingTrailer) {
+              console.log(
+                `Trailer already exists for YouTube video: ${item.snippet.title}`,
+              );
+              if (
+                !existingUserTrailers.some(
+                  (userTrailer) =>
+                    userTrailer.trailerId === existingTrailer._id,
+                )
+              ) {
+                await ctx.runMutation(internal.trailers.createUserTrailer, {
+                  trailerId: existingTrailer._id,
+                });
+              }
+              return;
+            }
             let year: string | undefined;
             const yearMatch = item.snippet.title.match(yearRegex);
             if (yearMatch) {
@@ -124,7 +167,7 @@ export const syncLikes = action({
       } else {
         pageToken = undefined;
       }
-    } while (pageToken !== undefined && page < 100);
+    } while (!doneSyncing && pageToken !== undefined && page < 100);
     await ctx.runMutation(internal.youtube.updateSync, {
       id: syncId,
       status: "done",

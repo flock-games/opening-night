@@ -1,5 +1,5 @@
 import { Id } from "./_generated/dataModel";
-import { internalMutation, mutation, query } from "./_generated/server";
+import { internalMutation, mutation, internalQuery } from "./_generated/server";
 import { v } from "convex/values";
 
 export const create = internalMutation({
@@ -79,5 +79,37 @@ export const dismissUserTrailer = mutation({
     await ctx.db.patch(userTrailer._id, {
       dismissed: true,
     });
+  },
+});
+
+export const getByYoutubeId = internalQuery({
+  args: {
+    youtubeId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { youtubeId } = args;
+    const trailer = await ctx.db
+      .query("trailers")
+      .withIndex("by_youtube_id", (q) => q.eq("youtubeId", youtubeId))
+      .first();
+
+    return trailer;
+  },
+});
+
+export const getUserTrailers = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("User is not authenticated");
+    }
+
+    const userTrailers = await ctx.db
+      .query("userTrailers")
+      .withIndex("by_user_id", (q) => q.eq("userId", identity.subject))
+      .collect();
+
+    return userTrailers;
   },
 });
