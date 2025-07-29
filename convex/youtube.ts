@@ -1,6 +1,6 @@
 import { action, query, internalMutation } from "./_generated/server";
 import { createClerkClient } from "@clerk/backend";
-import { internal, api } from "./_generated/api";
+import { internal } from "./_generated/api";
 import { v } from "convex/values";
 
 const yearRegex = /(\d{4})/;
@@ -59,7 +59,7 @@ export const updateSync = internalMutation({
 });
 
 export const syncLikes = action({
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
