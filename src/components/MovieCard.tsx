@@ -34,7 +34,11 @@ export function MovieCard({
         isExpanded ? "flex gap-6 items-start" : ""
       }`}
     >
-      <div className="md:hidden group-hover:block rounded-full bg-slate-800 hover:bg-rose-500 text-slate-300 hover:text-white absolute top-4 right-4 p-1 z-10">
+      <div
+        className={`rounded-full bg-slate-800 hover:bg-rose-500 text-slate-300 hover:text-white absolute top-4 right-4 p-1 z-10 ${
+          isExpanded ? "block" : "md:hidden group-hover:block"
+        }`}
+      >
         <FontAwesomeIcon
           onClick={(e) => {
             e.stopPropagation();
