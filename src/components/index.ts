@@ -5,3 +5,4 @@ export { NoUserMovies } from "./NoUserMovies";
 export { MovieSection } from "./MovieSection";
 export { MovieCard } from "./MovieCard";
 export { SyncYoutubeLikesButton } from "./SyncYoutubeLikesButton";
+export { NotificationToggle } from "./NotificationToggle";

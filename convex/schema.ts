@@ -27,6 +27,11 @@ export default defineSchema({
   })
     .index("by_user_id", ["userId"])
     .index("by_trailer_id", ["trailerId"]),
+  userNotifications: defineTable({
+    userId: v.string(),
+    enabled: v.boolean(),
+    email: v.string(),
+  }).index("by_user_id", ["userId"]),
   youtubeSyncs: defineTable({
     userId: v.string(),
     status: v.string(),

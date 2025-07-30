@@ -2,22 +2,30 @@ import { useAction } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
+import { useState } from "react";
 
 export function SyncYoutubeLikesButton() {
   const syncLikes = useAction(api.youtube.syncLikes);
+  const [isLoading, setIsLoading] = useState(false);
 
   const sync = async () => {
+    setIsLoading(true);
     await syncLikes({});
+    setIsLoading(false);
   };
 
   return (
-    <div>
+    <button
+      onClick={sync}
+      disabled={isLoading}
+      className={`p-2 rounded-lg transition-all duration-200 hover:bg-slate-600 group ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+      title={`Sync YouTube Likes`}
+    >
       <FontAwesomeIcon
-        onClick={() => sync()}
-        className="cursor-pointer hover:rotate-180 transition-transform duration-300"
+        className="cursor-pointer group-hover:rotate-180 transition-transform duration-300"
         size="xl"
         icon={byPrefixAndName.faslr["arrows-rotate"]}
       />
-    </div>
+    </button>
   );
 }

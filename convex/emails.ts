@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { components, internal } from "./_generated/api";
-import { internalMutation, mutation } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 import { vEmailId, vEmailEvent, Resend } from "@convex-dev/resend";
 
 export const resend: Resend = new Resend(components.resend, {
@@ -17,6 +17,67 @@ export const sendSuggestionDismissedEmail = mutation({
       subject: "Suggestion dismissed",
       html: `The suggestion "${args.userTrailerId}" was dismissed.`,
     });
+  },
+});
+
+export const getUserNotificationSettings = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const userId = identity.subject;
+    const userNotification = await ctx.db
+      .query("userNotifications")
+      .withIndex("by_user_id", (q) => q.eq("userId", userId))
+      .first();
+
+    return {
+      enabled: userNotification?.enabled ?? false,
+      email: userNotification?.email,
+    };
+  },
+});
+
+export const toggleNotifications = mutation({
+  args: { enabled: v.boolean() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const userId = identity.subject;
+    const email = identity.email;
+
+    if (!email) {
+      throw new Error("User email not found");
+    }
+
+    // Check if user notification record exists
+    const existingNotification = await ctx.db
+      .query("userNotifications")
+      .withIndex("by_user_id", (q) => q.eq("userId", userId))
+      .first();
+
+    if (existingNotification) {
+      // Update existing record
+      await ctx.db.patch(existingNotification._id, {
+        enabled: args.enabled,
+        email: email,
+      });
+    } else {
+      // Create new record
+      await ctx.db.insert("userNotifications", {
+        userId: userId,
+        enabled: args.enabled,
+        email: email,
+      });
+    }
+
+    return { success: true };
   },
 });
 
@@ -60,11 +121,27 @@ export const sendDailyReleaseNotifications = internalMutation({
         // Send emails to interested users
         for (const userTrailer of interestedUsers) {
           try {
+            // Check if user has notifications enabled and get their email
+            const userNotification = await ctx.db
+              .query("userNotifications")
+              .withIndex("by_user_id", (q) =>
+                q.eq("userId", userTrailer.userId),
+              )
+              .first();
+
+            // Skip if user doesn't have notifications enabled or no email found
+            if (!userNotification || !userNotification.enabled) {
+              console.log(
+                `Skipping user ${userTrailer.userId} - notifications disabled or not found`,
+              );
+              continue;
+            }
+
             const tmdbUrl = `https://www.themoviedb.org/movie/${movie.tmdbId}`;
 
             await resend.sendEmail(ctx, {
               from: "Opening Night <noreply@updates.openingnight.app>",
-              to: "tyler@flock.games", // TODO: Replace with actual user email when user management is implemented
+              to: userNotification.email,
               subject: `${movie.title} releases today!`,
               html: `
                 <h2>${movie.title} releases today!</h2>

@@ -7,6 +7,7 @@ import {
   LandingPage,
   UserMovies,
   SyncYoutubeLikesButton,
+  NotificationToggle,
 } from "./components";
 
 export default function App() {
@@ -17,9 +18,11 @@ export default function App() {
           <h1 className="text-2xl font-black text-amber-300">Opening Night</h1>
         </div>
         <Authenticated>
-          <div className="flex items-center gap-4">
-            <SyncYoutubeLikesButton />
-
+          <div className="flex items-center">
+            <div className="mr-2">
+              <SyncYoutubeLikesButton />
+              <NotificationToggle />
+            </div>
             <UserButton
               userProfileProps={{
                 additionalOAuthScopes: {
