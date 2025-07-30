@@ -32,9 +32,6 @@ export default function App() {
             />
           </div>
         </Authenticated>
-        <Unauthenticated>
-          <SignInButton />
-        </Unauthenticated>
       </header>
       <main>
         <Authenticated>
