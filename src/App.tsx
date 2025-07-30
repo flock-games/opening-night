@@ -107,13 +107,17 @@ function UserMovies() {
     });
   return (
     <div className="my-4 mx-4 lg:mx-auto max-2-2xl">
-      <MovieSection
-        title="Coming Soon"
-        icon="calendar"
-        movies={upcomingMovies}
-        includeDate={true}
-      />
-      <MovieSection title="Released" icon="tv" movies={releasedMovies} />
+      {upcomingMovies.length > 0 && (
+        <MovieSection
+          title="Coming Soon"
+          icon="calendar"
+          movies={upcomingMovies}
+          includeDate={true}
+        />
+      )}
+      {releasedMovies.length > 0 && (
+        <MovieSection title="Released" icon="tv" movies={releasedMovies} />
+      )}
     </div>
   );
 }
