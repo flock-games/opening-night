@@ -30,7 +30,10 @@ export function MovieCard({
     <div className="p-2 group cursor-pointer hover:bg-slate-700 transition-all duration-200 rounded-lg hover:scale-105 relative">
       <div className="md:hidden group-hover:block rounded-full bg-slate-800 hover:bg-rose-500 text-slate-300 hover:text-white absolute top-4 right-4 p-1">
         <FontAwesomeIcon
-          onClick={() => dismissSuggestion()}
+          onClick={(e) => {
+            e.stopPropagation();
+            dismissSuggestion();
+          }}
           className=" transition-colors duration-200 cursor-pointer"
           size="lg"
           icon={byPrefixAndName.faslr["trash"]}
