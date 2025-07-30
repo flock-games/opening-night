@@ -106,7 +106,7 @@ function UserMovies() {
       );
     });
   return (
-    <div className="my-4 mx-4 lg:mx-auto max-2-2xl">
+    <div className="my-4 mx-2 md:mx-4 lg:mx-auto max-2-2xl">
       {upcomingMovies.length > 0 && (
         <MovieSection
           title="Coming Soon"
@@ -161,7 +161,7 @@ function MovieSection({
   };
 
   return (
-    <div className="mb-4 mx-4 lg:mx-auto lg:max-w-4xl">
+    <div className="mb-4 mx-1 md:mx-4 lg:mx-auto lg:max-w-4xl">
       <h2 className="mb-2 text-2xl font-black">
         <FontAwesomeIcon
           className="mr-2"
@@ -170,11 +170,11 @@ function MovieSection({
         />
         {title}
       </h2>
-      <div className="flex flex-wrap bg-stone-800 rounded-lg mb-12 py-2 px-1 gap-y-4">
+      <div className="flex flex-wrap bg-stone-800 rounded-lg mb-12 py-1 md:py-2 px-1 gap-y-4">
         {movies.map((movie) => (
           <div
             onClick={() => movieClicked(movie._id)}
-            className={`px-2 transition-all  ${
+            className={`px-none md:px-2 transition-all  ${
               expandedMovie === movie._id
                 ? "w-full px-none"
                 : "w-1/2 md:w-1/4 lg:w-1/5"
@@ -214,7 +214,7 @@ function MovieCard({
 
   return (
     <div className="p-2 group cursor-pointer hover:bg-stone-700 transition-all duration-200 rounded-lg hover:scale-105 relative">
-      <div className="hidden group-hover:block rounded-full bg-stone-800 hover:bg-rose-500 text-stone-400 hover:text-white absolute bottom-2 right-2 p-1">
+      <div className="md:hidden group-hover:block rounded-full bg-stone-800 hover:bg-rose-500 text-stone-400 hover:text-white absolute top-4 right-4 p-1">
         <FontAwesomeIcon
           onClick={() => dismissSuggestion()}
           className=" transition-colors duration-200 cursor-pointer"
