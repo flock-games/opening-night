@@ -34,12 +34,12 @@ export function NotificationToggle() {
           ? "text-green-400 hover:text-rose-400"
           : "text-rose-400 hover:text-green-400"
       } ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-      title={`${isEnabled ? "Disable" : "Enable"} release notifications`}
+      title={`${isEnabled ? "Disable" : "Enable"} release email notifications`}
     >
       <FontAwesomeIcon
         icon={byPrefixAndName.faslr["bell"]}
         size="lg"
-        className={`transition-trasnform duration-300 group-hover:rotate-45 ${isLoading ? "animate-pulse" : ""}`}
+        className={`transition-transform duration-300 group-hover:rotate-45 ${isLoading ? "animate-pulse" : ""}`}
       />
     </button>
   );
