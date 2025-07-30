@@ -87,19 +87,22 @@ export function MovieCard({
         </p>
 
         {isExpanded && movie.trailer && (
-          <div className="mt-4">
+          <div className="mt-6">
             <p className="text-sm text-slate-400 italic">
               Suggested because you liked:
-              <br />
-              <a
-                href={`https://www.youtube.com/watch?v=${movie.trailer.youtubeId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-amber-100 hover:text-amber-200 font-medium"
-              >
-                {movie.trailer.title}
-              </a>
             </p>
+            <div className="aspect-video rounded-lg overflow-hidden shadow-lg">
+              <iframe
+                width="100%"
+                height="100%"
+                src={`https://www.youtube.com/embed/${movie.trailer.youtubeId}`}
+                title={movie.trailer.title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full"
+              ></iframe>
+            </div>
           </div>
         )}
 
