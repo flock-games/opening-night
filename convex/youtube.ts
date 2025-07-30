@@ -102,64 +102,56 @@ export const syncLikes = action({
       const data = await response.json();
 
       if ("items" in data) {
-        data.items
-          .filter((item: any) => {
-            const title = item.snippet.title.toLowerCase();
-            return title.includes("trailer") || title.includes("teaser");
-          })
-          .forEach(async (item: any) => {
-            const existingTrailer = await ctx.runQuery(
-              internal.trailers.getByYoutubeId,
-              { youtubeId: item.id },
-            );
-            if (existingTrailer) {
-              console.log(
-                `Trailer already exists for YouTube video: ${item.snippet.title}`,
-              );
-              if (
-                !existingUserTrailers.some(
-                  (userTrailer) =>
-                    userTrailer.trailerId === existingTrailer._id,
-                )
-              ) {
-                await ctx.runMutation(internal.trailers.createUserTrailer, {
-                  trailerId: existingTrailer._id,
-                });
-              }
-              return;
+        const trailers = data.items.filter((item: any) => {
+          const title = item.snippet.title.toLowerCase();
+          return title.includes("trailer") || title.includes("teaser");
+        });
+        for (var i = 0; i < trailers.length; i++) {
+          const item = trailers[i];
+          const existingTrailer = await ctx.runQuery(
+            internal.trailers.getByYoutubeId,
+            { youtubeId: item.id },
+          );
+          if (existingTrailer) {
+            if (
+              !existingUserTrailers.some(
+                (userTrailer) => userTrailer.trailerId === existingTrailer._id,
+              )
+            ) {
+              await ctx.runMutation(internal.trailers.createUserTrailer, {
+                trailerId: existingTrailer._id,
+              });
             }
-            let year: string | undefined;
-            const yearMatch = item.snippet.title.match(yearRegex);
-            if (yearMatch) {
-              year = yearMatch[0];
-            }
-
-            const parsedTitle = item.snippet.title
-              .split(dividerRegex)[0]
-              .trim()
-              .replace(/trailer/i, "")
-              .replace(/teaser/i, "")
-              .replace(/official/i, "");
-
-            const movieId = await ctx.runAction(internal.movies.search, {
-              name: parsedTitle,
-              year: year,
-            });
-
-            const trailerId = await ctx.runMutation(internal.trailers.create, {
-              youtubeId: item.id,
-              movieId: movieId ?? undefined,
-              title: item.snippet.title,
-              parsedTitle: parsedTitle,
-              thumbnail: item.snippet.thumbnails.default.url,
-              tags: item.snippet.tags || [],
-              categoryId: item.snippet.categoryId,
-            });
-
-            await ctx.runMutation(internal.trailers.createUserTrailer, {
-              trailerId,
-            });
+            return;
+          }
+          let year: string | undefined;
+          const yearMatch = item.snippet.title.match(yearRegex);
+          if (yearMatch) {
+            year = yearMatch[0];
+          }
+          const parsedTitle = item.snippet.title
+            .split(dividerRegex)[0]
+            .trim()
+            .replace(/trailer/i, "")
+            .replace(/teaser/i, "")
+            .replace(/official/i, "");
+          const movieId = await ctx.runAction(internal.movies.search, {
+            name: parsedTitle,
+            year: year,
           });
+          const trailerId = await ctx.runMutation(internal.trailers.create, {
+            youtubeId: item.id,
+            movieId: movieId ?? undefined,
+            title: item.snippet.title,
+            parsedTitle: parsedTitle,
+            thumbnail: item.snippet.thumbnails.default.url,
+            tags: item.snippet.tags || [],
+            categoryId: item.snippet.categoryId,
+          });
+          await ctx.runMutation(internal.trailers.createUserTrailer, {
+            trailerId,
+          });
+        }
       }
       if ("nextPageToken" in data && data.nextPageToken !== pageToken) {
         pageToken = data.nextPageToken;
