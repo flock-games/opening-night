@@ -2,6 +2,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
+import { useEffect, useRef } from "react";
 
 export function MovieCard({
   movie,
@@ -16,6 +17,7 @@ export function MovieCard({
   const sendDismissedEmail = useMutation(
     api.emails.sendSuggestionDismissedEmail,
   );
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const displayDate = new Date(movie.releaseDate).toLocaleDateString("en-US", {
     year: "numeric",
@@ -28,8 +30,19 @@ export function MovieCard({
     await sendDismissedEmail({ userTrailerId: movie.userTrailerId });
   };
 
+  // Scroll to the card when it becomes expanded
+  useEffect(() => {
+    if (isExpanded && cardRef.current) {
+      cardRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [isExpanded]);
+
   return (
     <div
+      ref={cardRef}
       className={`p-2 group cursor-pointer hover:bg-slate-700 transition-all duration-200 rounded-lg hover:scale-105 relative ${
         isExpanded ? "flex gap-6 items-start" : ""
       }`}
