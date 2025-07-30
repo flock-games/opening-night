@@ -39,14 +39,18 @@ export function MovieSection({
         {movies.map((movie) => (
           <div
             onClick={() => movieClicked(movie._id)}
-            className={`px-none md:px-2 transition-all  ${
+            className={`px-none md:px-2   ${
               expandedMovie === movie._id
                 ? "w-full px-none"
                 : "w-1/2 md:w-1/4 lg:w-1/5"
             }`}
             key={movie._id}
           >
-            <MovieCard movie={movie} includeDate={includeDate} />
+            <MovieCard
+              movie={movie}
+              includeDate={includeDate}
+              isExpanded={expandedMovie === movie._id}
+            />
           </div>
         ))}
       </div>
