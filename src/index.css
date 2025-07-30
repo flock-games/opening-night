@@ -3,8 +3,8 @@
 
 @theme {
   --font-sofia: "Sofia Sans Semi Condensed", sans-serif;
-  --color-light: var(--color-stone-100);
-  --color-dark: var(--color-stone-900);
+  --color-light: var(--color-slate-100);
+  --color-dark: var(--color-slate-900);
 }
 
 @media (prefers-color-scheme: dark) {

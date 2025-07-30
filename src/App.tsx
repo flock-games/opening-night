@@ -129,7 +129,7 @@ function NoUserMovies() {
         <h2 className="text-2xl mt-16 mb-8 font-black">No movies yet...</h2>
         <SyncYoutubeLikes />
         <p className=" mb-2">Try syncing your YouTube likes.</p>
-        <p className="text-stone-400 text-sm">
+        <p className="text-slate-400 text-sm">
           Opening Night is still in beta. If it fails to identify movies that
           should be here, please let us know!
         </p>
@@ -170,7 +170,7 @@ function MovieSection({
         />
         {title}
       </h2>
-      <div className="flex flex-wrap bg-stone-800 rounded-lg mb-12 py-1 md:py-2 px-1 gap-y-4">
+      <div className="flex flex-wrap bg-slate-800 rounded-lg mb-12 py-1 md:py-2 px-1 gap-y-4">
         {movies.map((movie) => (
           <div
             onClick={() => movieClicked(movie._id)}
@@ -213,8 +213,8 @@ function MovieCard({
   };
 
   return (
-    <div className="p-2 group cursor-pointer hover:bg-stone-700 transition-all duration-200 rounded-lg hover:scale-105 relative">
-      <div className="md:hidden group-hover:block rounded-full bg-stone-800 hover:bg-rose-500 text-stone-400 hover:text-white absolute top-4 right-4 p-1">
+    <div className="p-2 group cursor-pointer hover:bg-slate-700 transition-all duration-200 rounded-lg hover:scale-105 relative">
+      <div className="md:hidden group-hover:block rounded-full bg-slate-800 hover:bg-rose-500 text-slate-300 hover:text-white absolute top-4 right-4 p-1">
         <FontAwesomeIcon
           onClick={() => dismissSuggestion()}
           className=" transition-colors duration-200 cursor-pointer"
@@ -231,7 +231,7 @@ function MovieCard({
       <h3 className="text-lg font-semibold line-clamp-1">{movie.title}</h3>
 
       {includeDate && <p className="text-md font-regular">{displayDate}</p>}
-      <p className="text-sm text-stone-400 line-clamp-4">{movie.overview}</p>
+      <p className="text-sm text-slate-300 line-clamp-4">{movie.overview}</p>
     </div>
   );
 }
