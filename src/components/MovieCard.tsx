@@ -47,22 +47,6 @@ export function MovieCard({
         isExpanded ? "flex gap-6 items-start" : ""
       }`}
     >
-      <div
-        className={`rounded-full bg-slate-800 hover:bg-rose-500 text-slate-300 hover:text-white absolute top-4 right-4 p-1 z-10 ${
-          isExpanded ? "block" : "md:hidden group-hover:block"
-        }`}
-      >
-        <FontAwesomeIcon
-          onClick={(e) => {
-            e.stopPropagation();
-            dismissSuggestion();
-          }}
-          className="transition-colors duration-200 cursor-pointer"
-          size="lg"
-          icon={byPrefixAndName.faslr["trash"]}
-        />
-      </div>
-
       <div className={isExpanded ? "flex-shrink-0" : ""}>
         <img
           src={`https://image.tmdb.org/t/p/w500/${movie.posterPath}`}
@@ -101,7 +85,34 @@ export function MovieCard({
         >
           {movie.overview}
         </p>
+
+        {isExpanded && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              dismissSuggestion();
+            }}
+            className="mt-6 px-2 py-1 cursor-pointer bg-rose-700 hover:bg-rose-500 text-slate-50 hover:text-white rounded-lg transition-colors duration-200 flex items-center gap-1 text-md"
+          >
+            <FontAwesomeIcon icon={byPrefixAndName.faslr["trash"]} size="lg" />
+            Remove
+          </button>
+        )}
       </div>
+
+      {!isExpanded && (
+        <div className="md:hidden group-hover:block rounded-full bg-slate-800 hover:bg-rose-500 text-slate-300 hover:text-white absolute top-4 right-4 p-1 z-10">
+          <FontAwesomeIcon
+            onClick={(e) => {
+              e.stopPropagation();
+              dismissSuggestion();
+            }}
+            className="transition-colors duration-200 cursor-pointer"
+            size="lg"
+            icon={byPrefixAndName.faslr["trash"]}
+          />
+        </div>
+      )}
     </div>
   );
 }
