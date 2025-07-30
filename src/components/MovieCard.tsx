@@ -86,13 +86,30 @@ export function MovieCard({
           {movie.overview}
         </p>
 
+        {isExpanded && movie.trailer && (
+          <div className="mt-4">
+            <p className="text-sm text-slate-400 italic">
+              Suggested because you liked:
+              <br />
+              <a
+                href={`https://www.youtube.com/watch?v=${movie.trailer.youtubeId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-100 hover:text-amber-200 font-medium"
+              >
+                {movie.trailer.title}
+              </a>
+            </p>
+          </div>
+        )}
+
         {isExpanded && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               dismissSuggestion();
             }}
-            className="mt-6 px-2 py-1 cursor-pointer bg-rose-700 hover:bg-rose-500 text-slate-50 hover:text-white rounded-lg transition-colors duration-200 flex items-center gap-1 text-md"
+            className="mt-6 px-2 py-1 cursor-pointer bg-slate-900 hover:bg-rose-500 text-rose-200 hover:text-white rounded-lg transition-colors duration-200 flex items-center gap-1 text-md"
           >
             <FontAwesomeIcon icon={byPrefixAndName.faslr["trash"]} size="lg" />
             Remove

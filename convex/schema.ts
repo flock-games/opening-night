@@ -10,7 +10,9 @@ export default defineSchema({
     thumbnail: v.string(),
     tags: v.array(v.string()),
     categoryId: v.string(),
-  }).index("by_youtube_id", ["youtubeId"]),
+  })
+    .index("by_youtube_id", ["youtubeId"])
+    .index("by_movie_id", ["movieId"]),
   movies: defineTable({
     tmdbId: v.string(),
     title: v.string(),

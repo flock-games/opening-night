@@ -35,7 +35,14 @@ export const fetchUserMovies = query({
         if (!trailer?.movieId) return null;
         const movie = await ctx.db.get(trailer.movieId);
         if (!movie) return null;
-        return { ...movie, userTrailerId: trailer.userTrailerId };
+        return { 
+          ...movie, 
+          userTrailerId: trailer.userTrailerId,
+          trailer: {
+            youtubeId: trailer.youtubeId,
+            title: trailer.title,
+          }
+        };
       }),
     ).then((movies) => movies.filter((movie) => movie !== null));
 
