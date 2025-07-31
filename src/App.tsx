@@ -3,6 +3,7 @@
 import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { UserButton } from "@clerk/clerk-react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import TmdbLogo from "./images/tmdb.svg";
 import {
   Loading,
   LandingPage,
@@ -65,7 +66,7 @@ export default function App() {
       </main>
       <footer className="bg-slate-100 dark:bg-slate-900 mt-16 py-8 px-4 text-xs">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="flex justify-center space-x-6 mb-2">
+          <div className="flex justify-center  space-x-6 mb-2">
             <Link
               to="/privacy"
               className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
@@ -78,9 +79,19 @@ export default function App() {
             >
               Terms of Service
             </Link>
+            <a href="https://www.themoviedb.org/" target="_blank">
+              <img
+                src={TmdbLogo}
+                alt="TMDB Logo"
+                className="inline-block h-3 mr-1"
+              />
+            </a>
           </div>
           <p className="text-slate-500 dark:text-slate-500">
-            © {new Date().getFullYear()} Opening Night. All rights reserved.
+            This product uses the TMDB API but is not endorsed or certified by
+            TMDB.
+            <br />© {new Date().getFullYear()} Opening Night. All rights
+            reserved.
           </p>
         </div>
       </footer>
