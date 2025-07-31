@@ -20,10 +20,7 @@ export function LandingPage() {
       </SignInButton>
       <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
         By signing in, you agree to our{" "}
-        <Link
-          to="/privacy"
-          className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 underline"
-        >
+        <Link to="/privacy" className="underline">
           Privacy Policy
         </Link>
       </p>
