@@ -6,3 +6,4 @@ export { MovieSection } from "./MovieSection";
 export { MovieCard } from "./MovieCard";
 export { SyncYoutubeLikesButton } from "./SyncYoutubeLikesButton";
 export { NotificationToggle } from "./NotificationToggle";
+export { PrivacyPolicy } from "./PrivacyPolicy";
