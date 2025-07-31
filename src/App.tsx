@@ -10,6 +10,7 @@ import {
   SyncYoutubeLikesButton,
   NotificationToggle,
   PrivacyPolicy,
+  TermsOfService,
 } from "./components";
 
 function HomePage() {
@@ -59,6 +60,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
         </Routes>
       </main>
       <footer className="bg-slate-100 dark:bg-slate-900 mt-16 py-8 px-4 text-xs">
@@ -69,6 +71,12 @@ export default function App() {
               className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
             >
               Privacy Policy
+            </Link>
+            <Link
+              to="/terms"
+              className="text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+            >
+              Terms of Service
             </Link>
           </div>
           <p className="text-slate-500 dark:text-slate-500">
