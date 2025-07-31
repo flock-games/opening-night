@@ -18,7 +18,7 @@ export function SyncYoutubeLikesButton() {
     <button
       onClick={sync}
       disabled={isLoading}
-      className={`p-2 rounded-lg transition-all duration-200 hover:bg-slate-600 group ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+      className={`p-2 rounded-lg transition-all duration-200 hover:bg-slate-300 dark:hover:bg-slate-600 group ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
       title={`Sync YouTube Likes`}
     >
       <FontAwesomeIcon

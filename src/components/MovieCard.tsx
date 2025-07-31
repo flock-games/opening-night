@@ -43,7 +43,7 @@ export function MovieCard({
   return (
     <div
       ref={cardRef}
-      className={`p-2 group cursor-pointer hover:bg-slate-700 transition-all duration-200 rounded-lg hover:scale-105 relative ${
+      className={`p-2 group cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-700 transition-all duration-200 rounded-lg hover:scale-105 relative ${
         isExpanded ? "flex gap-6 items-start" : ""
       }`}
     >
@@ -60,7 +60,9 @@ export function MovieCard({
       <div className={isExpanded ? "flex-1 min-w-0" : ""}>
         <h3
           className={`font-semibold ${
-            isExpanded ? "text-2xl  text-amber-300" : "text-lg line-clamp-1"
+            isExpanded
+              ? "text-2xl  text-slate-700 dark:text-amber-300"
+              : "text-lg line-clamp-1"
           }`}
         >
           {movie.title}
@@ -69,7 +71,9 @@ export function MovieCard({
         {includeDate && (
           <p
             className={`font-regular ${
-              isExpanded ? "text-lg text-slate-200" : "text-md"
+              isExpanded
+                ? "text-lg text-slate-500 dark:text-slate-200"
+                : "text-md"
             }`}
           >
             {displayDate}
@@ -77,9 +81,9 @@ export function MovieCard({
         )}
 
         <p
-          className={`text-slate-300 ${
+          className={`text-slate-700 dark:text-slate-300 ${
             isExpanded
-              ? "text-base leading-relaxed mt-4"
+              ? "text-base leading-relaxed mt-2"
               : "text-sm line-clamp-4"
           }`}
         >
@@ -88,7 +92,7 @@ export function MovieCard({
 
         {isExpanded && movie.trailer && (
           <div className="mt-6">
-            <p className="text-sm text-slate-400 italic">
+            <p className="text-sm text-slate-700 dark:text-slate-400 italic">
               Suggested because you liked:
             </p>
             <div className="aspect-video rounded-lg overflow-hidden shadow-lg">
@@ -97,7 +101,6 @@ export function MovieCard({
                 height="100%"
                 src={`https://www.youtube.com/embed/${movie.trailer.youtubeId}`}
                 title={movie.trailer.title}
-                frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 className="w-full h-full"

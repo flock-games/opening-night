@@ -27,15 +27,15 @@ export function MovieSection({
 
   return (
     <div className="mb-4 mx-1 md:mx-4 lg:mx-auto lg:max-w-4xl">
-      <h2 className="mb-2 text-2xl font-black">
+      <h2 className="mb-2 text-xl font-black text-slate-600  dark:text-slate-100">
         <FontAwesomeIcon
-          className="mr-2"
+          className="mr-1"
           size="lg"
           icon={byPrefixAndName.faslr[icon]}
         />
         {title}
       </h2>
-      <div className="flex flex-wrap bg-slate-800 rounded-lg mb-12 py-1 md:py-2 px-1 gap-y-4">
+      <div className="flex flex-wrap bg-slate-200 dark:bg-slate-800 rounded-lg mb-12 py-1 md:py-2 px-1 gap-y-4">
         {movies.map((movie) => (
           <div
             onClick={() => movieClicked(movie._id)}

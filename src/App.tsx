@@ -15,7 +15,9 @@ export default function App() {
     <>
       <header className="sticky flex justify-between top-0 z-10 bg-light dark:bg-dark px-4 lg:px-8 py-4">
         <div>
-          <h1 className="text-2xl font-black text-amber-300">Opening Night</h1>
+          <h1 className="text-2xl font-black text-slate-700 dark:text-amber-300">
+            Opening Night
+          </h1>
         </div>
         <Authenticated>
           <div className="flex items-center">

@@ -29,7 +29,7 @@ export function NotificationToggle() {
     <button
       onClick={handleToggle}
       disabled={isLoading}
-      className={`p-2 rounded-lg transition-all duration-200 hover:bg-slate-600 group ${
+      className={`p-2 rounded-lg transition-all duration-200 hover:bg-slate-300 dark:hover:bg-slate-600 group ${
         isEnabled
           ? "text-green-400 hover:text-rose-400"
           : "text-rose-400 hover:text-green-400"
