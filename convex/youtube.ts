@@ -102,7 +102,7 @@ export const syncLikes = action({
       const data = await response.json();
       if (data.error) {
         throw new ConvexError(
-          `${data.error.message} Please log out and grant YouTube permissions access when you log in.`,
+          `${data.error.message} Log out and grant access to YouTube when you log in.`,
         );
       }
 

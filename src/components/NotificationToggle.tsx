@@ -3,6 +3,7 @@ import { api } from "../../convex/_generated/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export function NotificationToggle() {
   const notificationSettings = useQuery(api.emails.getUserNotificationSettings);
@@ -16,6 +17,11 @@ export function NotificationToggle() {
     try {
       const newEnabledState = !notificationSettings?.enabled;
       await toggleNotifications({ enabled: newEnabledState });
+      toast.success(
+        newEnabledState
+          ? "You will receive an email when movies on your Coming Soon list are released!"
+          : "You will no longer receive emails for new releases.",
+      );
     } catch (error) {
       console.error("Failed to toggle notifications:", error);
     } finally {
