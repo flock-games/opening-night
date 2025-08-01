@@ -44,7 +44,9 @@ export function MovieCard({
     <div
       ref={cardRef}
       className={`p-2 group cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-700 transition-all duration-200 rounded-lg hover:scale-105 relative ${
-        isExpanded ? "flex gap-6 items-start" : ""
+        isExpanded
+          ? "flex gap-6 items-start bg-slate-300 dark:bg-slate-700 scale-105"
+          : ""
       }`}
     >
       <div className={isExpanded ? "flex-shrink-0" : ""}>
