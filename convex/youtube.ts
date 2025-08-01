@@ -1,7 +1,7 @@
 import { action, query, internalMutation } from "./_generated/server";
 import { createClerkClient } from "@clerk/backend";
 import { internal } from "./_generated/api";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 
 const yearRegex = /(\d{4})/;
 const dividerRegex = /[|:(-]/;
@@ -100,6 +100,11 @@ export const syncLikes = action({
         }),
       });
       const data = await response.json();
+      if (data.error) {
+        throw new ConvexError(
+          `${data.error.message} Please log out and grant YouTube permissions access when you log in.`,
+        );
+      }
 
       if ("items" in data) {
         const trailers = data.items.filter((item: any) => {
