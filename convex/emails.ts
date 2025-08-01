@@ -164,6 +164,7 @@ export const sendDailyReleaseNotifications = internalMutation({
                   </a>
                 </p>
                 <p>Thank you for using Opening Night!</p>
+                You can manage your notifications on <a href="https://openingnight.app" style="color: #f59e0b;">Opening Night</a>
               `,
             });
 
@@ -179,6 +180,96 @@ export const sendDailyReleaseNotifications = internalMutation({
         }
       }
     }
+  },
+});
+
+export const sendMovieList = mutation({
+  args: {
+    movies: v.array(
+      v.object({
+        _id: v.id("movies"),
+        title: v.string(),
+        overview: v.string(),
+        posterPath: v.string(),
+        releaseDate: v.string(),
+        tmdbId: v.string(),
+      }),
+    ),
+    listTitle: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const email = identity.email;
+    if (!email) {
+      throw new Error("User email not found");
+    }
+
+    // Generate HTML table for movies
+    const moviesHtml = args.movies
+      .map((movie) => {
+        const tmdbUrl = `https://www.themoviedb.org/movie/${movie.tmdbId}`;
+        const isUnreleased = new Date(movie.releaseDate) >= new Date();
+        const displayDate = isUnreleased
+          ? new Date(movie.releaseDate).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })
+          : null;
+
+        return `
+        <tr style="border-bottom: 1px solid #e5e7eb;">
+          <td style="padding: 16px; vertical-align: top;">
+            <img src="https://image.tmdb.org/t/p/w200${movie.posterPath}" 
+                 alt="${movie.title}" 
+                 style="width: 100px; border-radius: 8px;" />
+          </td>
+          <td style="padding: 16px; vertical-align: top;">
+            <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: bold;">
+              <a href="${tmdbUrl}" style="color: #1f2937; text-decoration: none;">${movie.title}</a>
+            </h3>
+            ${isUnreleased ? `<p style="margin: 0 0 8px 0; color: #6b7280; font-weight: 600;">Releases: ${displayDate}</p>` : ""}
+            <p style="margin: 0; color: #374151; line-height: 1.5;">${movie.overview}</p>
+            <p style="margin: 16px 0 0 0;">
+              <a href="${tmdbUrl}" 
+                 style="background-color: #f59e0b; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; display: inline-block;">
+                View on TMDB
+              </a>
+            </p>
+          </td>
+        </tr>
+      `;
+      })
+      .join("");
+
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
+        <h1 style="color: #1f2937; margin-bottom: 24px;">${args.listTitle}</h1>
+        <p style="color: #6b7280; margin-bottom: 32px;">Here's your movie list from Opening Night:</p>
+        
+        <table style="width: 100%; border-collapse: collapse; background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);">
+          ${moviesHtml}
+        </table>
+        
+        <p style="margin-top: 32px; color: #6b7280; font-size: 14px;">
+          Thank you for using Opening Night!<br>
+          <a href="https://openingnight.app" style="color: #f59e0b;">Visit Opening Night</a>
+        </p>
+      </div>
+    `;
+
+    await resend.sendEmail(ctx, {
+      from: "Opening Night <noreply@updates.openingnight.app>",
+      to: email,
+      subject: `Your ${args.listTitle} from Opening Night`,
+      html: html,
+    });
+
+    return { success: true };
   },
 });
 

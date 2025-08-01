@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
 import { MovieCard } from "./MovieCard";
+import { EmailMovieListButton } from "./EmailMovieListButton";
 
 export function MovieSection({
   title,
@@ -27,14 +28,17 @@ export function MovieSection({
 
   return (
     <div className="mb-4 mx-1 md:mx-4 lg:mx-auto lg:max-w-4xl">
-      <h2 className="mb-2 text-xl font-black text-slate-600  dark:text-slate-100">
-        <FontAwesomeIcon
-          className="mr-1"
-          size="lg"
-          icon={byPrefixAndName.faslr[icon]}
-        />
-        {title}
-      </h2>
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-xl font-black text-slate-600 dark:text-slate-100">
+          <FontAwesomeIcon
+            className="mr-1"
+            size="lg"
+            icon={byPrefixAndName.faslr[icon]}
+          />
+          {title}
+        </h2>
+        <EmailMovieListButton movies={movies} listTitle={title} />
+      </div>
       <div className="flex flex-wrap bg-slate-200 dark:bg-slate-800 rounded-lg mb-12 py-1 md:py-2 px-1 gap-y-4">
         {movies.map((movie) => (
           <div
