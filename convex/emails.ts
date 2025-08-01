@@ -279,7 +279,6 @@ export const handleEmailEvent = internalMutation({
     event: vEmailEvent,
   },
   handler: async (_, args) => {
-    console.log("Got called back!", args.id, args.event);
-    // Probably do something with the event if you care about deliverability!
+    console.log("Received an email event: ", args.id, args.event);
   },
 });

@@ -127,7 +127,8 @@ export const syncLikes = action({
                 trailerId: existingTrailer._id,
               });
             }
-            return;
+            // Skip if the trailer already exists
+            continue;
           }
           let year: string | undefined;
           const yearMatch = item.snippet.title.match(yearRegex);
