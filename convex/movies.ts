@@ -35,13 +35,13 @@ export const fetchUserMovies = query({
         if (!trailer?.movieId) return null;
         const movie = await ctx.db.get(trailer.movieId);
         if (!movie) return null;
-        return { 
-          ...movie, 
+        return {
+          ...movie,
           userTrailerId: trailer.userTrailerId,
           trailer: {
             youtubeId: trailer.youtubeId,
             title: trailer.title,
-          }
+          },
         };
       }),
     ).then((movies) => movies.filter((movie) => movie !== null));
@@ -113,5 +113,114 @@ export const create = internalMutation({
     });
 
     return id;
+  },
+});
+
+export const updateUnreleasedMoviesDates = internalAction({
+  args: {},
+  handler: async (
+    ctx,
+  ): Promise<{
+    updatedCount: number;
+    errorCount: number;
+    totalChecked: number;
+  }> => {
+    console.log("Starting weekly movie release date update...");
+
+    // Get all movies that haven't been released yet (release date >= today)
+    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
+    const movies: any[] = await ctx.runMutation(
+      internal.movies.getUnreleasedMovies,
+      { today },
+    );
+
+    console.log(`Found ${movies.length} unreleased movies to check`);
+
+    let updatedCount = 0;
+    let errorCount = 0;
+
+    for (const movie of movies) {
+      try {
+        const updatedMovie = await ctx.runAction(
+          internal.movies.fetchMovieFromTMDB,
+          {
+            tmdbId: movie.tmdbId,
+          },
+        );
+
+        if (updatedMovie && updatedMovie.releaseDate !== movie.releaseDate) {
+          await ctx.runMutation(internal.movies.updateMovieReleaseDate, {
+            movieId: movie._id,
+            releaseDate: updatedMovie.releaseDate,
+          });
+          updatedCount++;
+          console.log(
+            `Updated ${movie.title}: ${movie.releaseDate} -> ${updatedMovie.releaseDate}`,
+          );
+        }
+      } catch (error) {
+        errorCount++;
+        console.error(`Failed to update movie ${movie.title}:`, error);
+      }
+    }
+
+    console.log(
+      `Movie update complete: ${updatedCount} updated, ${errorCount} errors`,
+    );
+    return { updatedCount, errorCount, totalChecked: movies.length };
+  },
+});
+
+export const getUnreleasedMovies = internalMutation({
+  args: { today: v.string() },
+  handler: async (ctx, { today }) => {
+    const movies = await ctx.db.query("movies").collect();
+
+    // Filter movies that haven't been released yet or have empty release dates
+    return movies.filter((movie) => {
+      if (!movie.releaseDate || movie.releaseDate === "") {
+        return true; // Include movies with no release date
+      }
+      return movie.releaseDate >= today;
+    });
+  },
+});
+
+export const fetchMovieFromTMDB = internalAction({
+  args: { tmdbId: v.string() },
+  handler: async (ctx, { tmdbId }) => {
+    const url = `${apiRoot}/movie/${tmdbId}?language=en-US`;
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch movie from TMDB: ${response.statusText}`,
+      );
+    }
+
+    const data = await response.json();
+
+    return {
+      tmdbId: `${data.id}`,
+      title: data.title,
+      releaseDate: data.release_date || "",
+      overview: data.overview || "",
+      posterPath: data.poster_path || "",
+    };
+  },
+});
+
+export const updateMovieReleaseDate = internalMutation({
+  args: {
+    movieId: v.id("movies"),
+    releaseDate: v.string(),
+  },
+  handler: async (ctx, { movieId, releaseDate }) => {
+    await ctx.db.patch(movieId, { releaseDate });
   },
 });
