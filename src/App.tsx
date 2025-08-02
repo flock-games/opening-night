@@ -33,7 +33,7 @@ function HomePage() {
 export default function App() {
   return (
     <Router>
-      <header className="sticky flex justify-between top-0 z-10 bg-light dark:bg-dark px-4 lg:px-8 py-4">
+      <header className="sticky flex justify-between top-0 z-20 bg-light dark:bg-dark px-4 lg:px-8 py-4">
         <div>
           <Link to="/">
             <h1 className="text-2xl font-black text-slate-700 dark:text-amber-300 hover:text-slate-600 dark:hover:text-amber-400 transition-colors cursor-pointer">
