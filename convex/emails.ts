@@ -273,6 +273,46 @@ export const sendMovieList = mutation({
   },
 });
 
+export const sendFeedback = mutation({
+  args: { feedback: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const userEmail = identity.email || "Unknown user";
+    const userName = identity.name || "Unknown user";
+
+    await resend.sendEmail(ctx, {
+      from: "Opening Night <noreply@updates.openingnight.app>",
+      to: "tyler@flock.games",
+      subject: "New Feedback from Opening Night",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1f2937; margin-bottom: 24px;">New Feedback from Opening Night</h2>
+          
+          <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+            <p style="margin: 0 0 8px 0; color: #4b5563;"><strong>From:</strong> ${userName} (${userEmail})</p>
+            <p style="margin: 0; color: #4b5563;"><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+          </div>
+          
+          <div style="background-color: white; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+            <h3 style="margin: 0 0 12px 0; color: #1f2937;">Feedback:</h3>
+            <p style="margin: 0; color: #374151; line-height: 1.6; white-space: pre-wrap;">${args.feedback}</p>
+          </div>
+          
+          <p style="margin-top: 24px; color: #6b7280; font-size: 14px;">
+            This feedback was sent from <a href="https://openingnight.app" style="color: #f59e0b;">Opening Night</a>
+          </p>
+        </div>
+      `,
+    });
+
+    return { success: true };
+  },
+});
+
 export const handleEmailEvent = internalMutation({
   args: {
     id: vEmailId,

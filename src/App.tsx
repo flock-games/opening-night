@@ -10,6 +10,7 @@ import {
   UserMovies,
   SyncYoutubeLikesButton,
   NotificationToggle,
+  FeedbackButton,
   PrivacyPolicy,
   TermsOfService,
 } from "./components";
@@ -44,8 +45,9 @@ export default function App() {
         <Authenticated>
           <div className="flex items-center">
             <div className="mr-2">
-              <SyncYoutubeLikesButton />
               <NotificationToggle />
+              <SyncYoutubeLikesButton />
+              <FeedbackButton />
             </div>
             <UserButton
               userProfileProps={{
