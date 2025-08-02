@@ -53,7 +53,9 @@ export function EmailMovieListButton({
     >
       <FontAwesomeIcon
         icon={byPrefixAndName.faslr["envelope"]}
-        className={"group-hover:rotate-45 " + isLoading ? "animate-pulse" : ""}
+        className={`transition-transform duration-300 group-hover:rotate-15 ${
+          isLoading ? "animate-pulse" : ""
+        }`}
       />
       Email me this list
     </button>

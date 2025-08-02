@@ -45,7 +45,7 @@ export function MovieCard({
       ref={cardRef}
       className={`p-2 group cursor-pointer hover:bg-slate-300 dark:hover:bg-slate-700 transition-all duration-200 rounded-lg hover:scale-105 relative ${
         isExpanded
-          ? "flex gap-6 items-start bg-slate-300 dark:bg-slate-700 scale-105"
+          ? "flex flex-col md:flex-row gap-6 md:items-start bg-slate-300 dark:bg-slate-700 scale-105"
           : ""
       }`}
     >
@@ -54,7 +54,9 @@ export function MovieCard({
           src={`https://image.tmdb.org/t/p/w500/${movie.posterPath}`}
           alt={movie.title}
           className={`rounded-lg shadow-lg ${
-            isExpanded ? "w-48 h-72 object-cover" : "mb-2 w-full"
+            isExpanded
+              ? "w-full md:w-48 h-auto md:h-72 max-h-80 object-cover"
+              : "mb-2 w-full"
           }`}
         />
       </div>
@@ -92,9 +94,10 @@ export function MovieCard({
           {movie.overview}
         </p>
 
+        {/* Trailer section - hidden on mobile, shown on desktop within text column */}
         {isExpanded && movie.trailer && (
-          <div className="mt-6">
-            <p className="text-sm text-slate-700 dark:text-slate-400 italic">
+          <div className="hidden md:block mt-6">
+            <p className="text-sm text-slate-700 dark:text-slate-400 italic mb-2">
               Suggested because you liked:
             </p>
             <div className="aspect-video rounded-lg overflow-hidden shadow-lg">
@@ -124,6 +127,26 @@ export function MovieCard({
           </button>
         )}
       </div>
+
+      {/* Trailer section - full width on mobile only, below all other content */}
+      {isExpanded && movie.trailer && (
+        <div className="block md:hidden w-full mt-6">
+          <p className="text-sm text-slate-700 dark:text-slate-400 italic mb-2">
+            Suggested because you liked:
+          </p>
+          <div className="aspect-video rounded-lg overflow-hidden shadow-lg">
+            <iframe
+              width="100%"
+              height="100%"
+              src={`https://www.youtube.com/embed/${movie.trailer.youtubeId}`}
+              title={movie.trailer.title}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+            ></iframe>
+          </div>
+        </div>
+      )}
 
       {!isExpanded && (
         <div className="md:hidden group-hover:block rounded-full bg-slate-800 hover:bg-rose-500 text-slate-300 hover:text-white absolute top-4 right-4 p-1 z-10">
