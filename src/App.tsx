@@ -4,6 +4,8 @@ import { Authenticated, AuthLoading, Unauthenticated } from "convex/react";
 import { UserButton } from "@clerk/clerk-react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import TmdbLogo from "./images/tmdb.svg";
+import LogoLight from "./images/opening-night-logo-light.png";
+import LogoDark from "./images/opening-night-logo-dark.png";
 import {
   Loading,
   LandingPage,
@@ -37,9 +39,18 @@ export default function App() {
       <header className="sticky flex justify-between top-0 z-20 bg-light dark:bg-dark px-4 lg:px-8 py-4">
         <div>
           <Link to="/">
-            <h1 className="text-2xl font-black text-slate-700 dark:text-amber-300 hover:text-slate-600 dark:hover:text-amber-400 transition-colors cursor-pointer">
-              Opening Night
-            </h1>
+            {/* Light mode logo (dark text/elements) */}
+            <img 
+              src={LogoLight} 
+              alt="Opening Night" 
+              className="h-8 dark:hidden hover:opacity-80 transition-opacity cursor-pointer"
+            />
+            {/* Dark mode logo (light text/elements) */}
+            <img 
+              src={LogoDark} 
+              alt="Opening Night" 
+              className="h-8 hidden dark:block hover:opacity-80 transition-opacity cursor-pointer"
+            />
           </Link>
         </div>
         <Authenticated>
