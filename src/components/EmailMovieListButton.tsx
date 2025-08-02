@@ -3,7 +3,7 @@ import { api } from "../../convex/_generated/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export function EmailMovieListButton({
   movies,
@@ -48,12 +48,12 @@ export function EmailMovieListButton({
     <button
       onClick={handleEmailList}
       disabled={isLoading}
-      className="flex items-center gap-2 px-3 py-2 text-sm cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="group flex items-center gap-2 px-3 py-2 text-sm cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
       title={`Email me this ${listTitle.toLowerCase()}`}
     >
       <FontAwesomeIcon
         icon={byPrefixAndName.faslr["envelope"]}
-        className={isLoading ? "animate-pulse" : ""}
+        className={"group-hover:rotate-45 " + isLoading ? "animate-pulse" : ""}
       />
       Email me this list
     </button>

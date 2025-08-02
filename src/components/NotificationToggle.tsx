@@ -3,7 +3,7 @@ import { api } from "../../convex/_generated/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export function NotificationToggle() {
   const notificationSettings = useQuery(api.emails.getUserNotificationSettings);

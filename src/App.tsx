@@ -90,6 +90,8 @@ export default function App() {
           <p className="text-slate-500 dark:text-slate-500">
             This product uses the TMDB API but is not endorsed or certified by
             TMDB.
+            <br />
+            Something by <a href="https://tylerdawson.dev">Tyler Dawson</a>
             <br />© {new Date().getFullYear()} Opening Night. All rights
             reserved.
           </p>

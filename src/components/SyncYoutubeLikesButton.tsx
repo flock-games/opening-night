@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
 import { useState } from "react";
 import { ConvexError } from "convex/values";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 
 export function SyncYoutubeLikesButton() {
   const syncLikes = useAction(api.youtube.syncLikes);
@@ -17,7 +17,9 @@ export function SyncYoutubeLikesButton() {
       toast.success("YouTube likes synced successfully!");
     } catch (error) {
       const errorMessage =
-        error instanceof ConvexError ? error.data : "An unexpected error occurred";
+        error instanceof ConvexError
+          ? error.data
+          : "An unexpected error occurred";
       toast.error(errorMessage);
     }
 
