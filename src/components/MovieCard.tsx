@@ -3,6 +3,7 @@ import { api } from "../../convex/_generated/api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
 import { useEffect, useRef } from "react";
+import { formatReleaseDate } from "../utils/dateUtils";
 
 export function MovieCard({
   movie,
@@ -19,11 +20,7 @@ export function MovieCard({
   );
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const displayDate = new Date(movie.releaseDate).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const displayDate = formatReleaseDate(movie.releaseDate);
 
   const dismissSuggestion = async () => {
     await dismiss({ userTrailerId: movie.userTrailerId });

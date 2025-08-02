@@ -3,6 +3,22 @@ import { components, internal } from "./_generated/api";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { vEmailId, vEmailEvent, Resend } from "@convex-dev/resend";
 
+/**
+ * Formats a date string (YYYY-MM-DD) to a localized date string
+ * without timezone conversion issues.
+ */
+function formatReleaseDate(dateString: string): string {
+  // Parse the date string manually to avoid timezone issues
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day); // month is 0-indexed
+  
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
 export const resend: Resend = new Resend(components.resend, {
   testMode: false,
   onEmailEvent: internal.emails.handleEmailEvent,
@@ -214,11 +230,7 @@ export const sendMovieList = mutation({
         const tmdbUrl = `https://www.themoviedb.org/movie/${movie.tmdbId}`;
         const isUnreleased = new Date(movie.releaseDate) >= new Date();
         const displayDate = isUnreleased
-          ? new Date(movie.releaseDate).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })
+          ? formatReleaseDate(movie.releaseDate)
           : null;
 
         return `
