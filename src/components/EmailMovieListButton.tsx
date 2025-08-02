@@ -48,7 +48,7 @@ export function EmailMovieListButton({
     <button
       onClick={handleEmailList}
       disabled={isLoading}
-      className="group flex items-center gap-2 px-3 py-2 text-sm cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 text-white rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="group flex items-center gap-2 px-3 py-2 text-sm cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 dark:text-white rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
       title={`Email me this ${listTitle.toLowerCase()}`}
     >
       <FontAwesomeIcon
