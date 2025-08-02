@@ -1,45 +1,90 @@
-# Welcome to your Convex + React (Vite) + Convex Auth app
+# Opening Night
 
-This is a [Convex](https://convex.dev/) project created with [`npm create convex`](https://www.npmjs.com/package/create-convex).
+Opening Night helps you rediscover upcoming and released movies from trailers you liked on YouTube. Turn on reminders to receive emails when your movies are about to be released.
 
-After the initial setup (<2 minutes) you'll have a working full-stack app using:
+## Overview
 
-- Convex as your backend (database, server logic)
-- [React](https://react.dev/) as your frontend (web page interactivity)
-- [Vite](https://vitest.dev/) for optimized web hosting
-- [Tailwind](https://tailwindcss.com/) for building great looking UI
-- [Convex Auth](https://labs.convex.dev/auth) for authentication
+Opening Night is a full-stack web application featuring:
 
-## Get started
+- **YouTube Sync**: Connects to your YouTube account to analyze your liked videos and identify movie trailers
+- **Movie Discovery**: Automatically matches trailer videos to movie data using The Movie Database (TMDB) API
+- **Smart Notifications**: Sends email reminders when movies you're interested in are released
+- **Personal Dashboard**: Organizes your movies into "Coming Soon" and "Released" sections
+- **Email Integration**: Send yourself curated movie lists and manage notification preferences
 
-If you just cloned this codebase and didn't use `npm create convex`, run:
+### Tech Stack
 
+- **Frontend**: React with TypeScript, Vite, and Tailwind CSS
+- **Backend**: Convex for database, server logic, and real-time updates
+- **Authentication**: Clerk with Google OAuth integration
+- **External APIs**: Resend, YouTube Data API v3, and The Movie Database (TMDB) API
+- **Email**: [Resend Convex Component](https://www.convex.dev/components/resend) for emails and notifications
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js
+- Convex account
+- Clerk account
+- A Google account for YouTube integration
+- API keys for Resend, YouTube Data API, and TMDB (see Environment Setup below)
+
+### Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/flock-games/opening-night.git
+cd opening-night
 ```
+
+2. Install dependencies:
+
+```bash
 npm install
+```
+
+3. Set up your environment variables (see Environment Setup section)
+
+4. Start the development server:
+
+```bash
 npm run dev
 ```
 
-If you're reading this README on GitHub and want to use this template, run:
+The app will be available at `http://localhost:5173`
+
+### Environment Setup
+
+You'll need to configure the following environment variables in your Convex deployment:
 
 ```
-npm create convex@latest -- -t react-vite-convexauth
+CLERK_CLIENT_SECRET=
+CLERK_JWT_ISSUER_DOMAIN=
+GOOGLE_API_KEY=
+RESEND_API_KEY=
+RESEND_WEBHOOK_SECRET=
+TMDB_API_KEY=
 ```
 
-For more information on how to configure Convex Auth, check out the [Convex Auth docs](https://labs.convex.dev/auth/).
+They can be obtained by registering for the corresponding services: Clerk, Google Cloud, Resend, and The Movie Database.
 
-For more examples of different Convex Auth flows, check out this [example repo](https://www.convex.dev/templates/convex-auth).
+You will also need to make your Clerk Publishable Key accessible by defining it in your `.env` file:
 
-## Learn more
+```
+VITE_CLERK_PUBLISHABLE_KEY=
+```
 
-To learn more about developing your project with Convex, check out:
+More information about setting up Clerk with Google OAuth in different environments can be found [here](https://clerk.com/docs/authentication/social-connections/google).
 
-- The [Tour of Convex](https://docs.convex.dev/get-started) for a thorough introduction to Convex principles.
-- The rest of [Convex docs](https://docs.convex.dev/) to learn about all Convex features.
-- [Stack](https://stack.convex.dev/) for in-depth articles on advanced topics.
+## Dev Stack Documentation
 
-## Join the community
+This project is built with Convex. To learn more about the development stack:
 
-Join thousands of developers building full-stack apps with Convex:
-
-- Join the [Convex Discord community](https://convex.dev/community) to get help in real-time.
-- Follow [Convex on GitHub](https://github.com/get-convex/), star and contribute to the open-source implementation of Convex.
+- [Convex](https://docs.convex.dev/)
+- [Resend](https://resend.com/docs/introduction)
+- [Clerk](https://clerk.com/docs)
+- [YouTube API](https://developers.google.com/youtube/v3)
+- [React](https://react.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
