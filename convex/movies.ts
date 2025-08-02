@@ -188,7 +188,7 @@ export const getUnreleasedMovies = internalMutation({
 
 export const fetchMovieFromTMDB = internalAction({
   args: { tmdbId: v.string() },
-  handler: async (ctx, { tmdbId }) => {
+  handler: async (_ctx, { tmdbId }) => {
     const url = `${apiRoot}/movie/${tmdbId}?language=en-US`;
 
     const response = await fetch(url, {
