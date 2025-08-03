@@ -36,39 +36,43 @@ function HomePage() {
 export default function App() {
   return (
     <Router>
-      <header className="sticky flex justify-between top-0 z-20 bg-light dark:bg-dark px-4 lg:px-8 py-4">
-        <div>
-          <Link to="/">
-            {/* Light mode logo (dark text/elements) */}
-            <img 
-              src={LogoLight} 
-              alt="Opening Night" 
-              className="h-8 dark:hidden hover:opacity-80 transition-opacity cursor-pointer"
-            />
-            {/* Dark mode logo (light text/elements) */}
-            <img 
-              src={LogoDark} 
-              alt="Opening Night" 
-              className="h-8 hidden dark:block hover:opacity-80 transition-opacity cursor-pointer"
-            />
-          </Link>
-        </div>
-        <Authenticated>
-          <div className="flex items-center">
-            <div className="mr-2">
-              <NotificationToggle />
-              <SyncYoutubeLikesButton />
-              <FeedbackButton />
-            </div>
-            <UserButton
-              userProfileProps={{
-                additionalOAuthScopes: {
-                  google: ["https://www.googleapis.com/auth/youtube.readonly"],
-                },
-              }}
-            />
+      <header className="sticky top-0 z-20 bg-light dark:bg-dark py-4">
+        <div className="flex justify-between mx-1 md:mx-4 lg:mx-auto lg:max-w-4xl">
+          <div>
+            <Link to="/">
+              {/* Light mode logo (dark text/elements) */}
+              <img
+                src={LogoLight}
+                alt="Opening Night"
+                className="h-8 dark:hidden hover:opacity-80 transition-opacity cursor-pointer"
+              />
+              {/* Dark mode logo (light text/elements) */}
+              <img
+                src={LogoDark}
+                alt="Opening Night"
+                className="h-8 hidden dark:block hover:opacity-80 transition-opacity cursor-pointer"
+              />
+            </Link>
           </div>
-        </Authenticated>
+          <Authenticated>
+            <div className="flex items-center">
+              <div className="mr-2">
+                <NotificationToggle />
+                <SyncYoutubeLikesButton />
+                <FeedbackButton />
+              </div>
+              <UserButton
+                userProfileProps={{
+                  additionalOAuthScopes: {
+                    google: [
+                      "https://www.googleapis.com/auth/youtube.readonly",
+                    ],
+                  },
+                }}
+              />
+            </div>
+          </Authenticated>
+        </div>
       </header>
       <main>
         <Routes>

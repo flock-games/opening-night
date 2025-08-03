@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export function LandingPage() {
   return (
-    <div className="my-4 mx-4 lg:mx-auto max-w-2xl">
+    <div className="my-4 mx-4 lg:mx-auto max-w-4xl">
       <h2 className="text-3xl mt-16 mb-4 font-black">
         Remember that movie trailer you liked on YouTube ten months ago?
       </h2>
