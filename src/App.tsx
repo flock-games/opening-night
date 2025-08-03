@@ -37,7 +37,7 @@ export default function App() {
   return (
     <Router>
       <header className="sticky top-0 z-20 bg-light dark:bg-dark py-4">
-        <div className="flex justify-between mx-1 md:mx-4 lg:mx-auto lg:max-w-4xl">
+        <div className="flex justify-between items-center mx-3 md:mx-4 lg:mx-auto lg:max-w-4xl">
           <div>
             <Link to="/">
               {/* Light mode logo (dark text/elements) */}
