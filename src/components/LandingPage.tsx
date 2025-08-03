@@ -7,17 +7,20 @@ export function LandingPage() {
   return (
     <div className="mt-8 mb-4 mx-4 lg:mx-auto max-w-4xl flex gap-4">
       <div>
-        <h2 className="text-6xl mb-4 font-black">
-          Turn YouTube likes into movie nights
+        <h2 className="text-6xl mb-8 font-black">
+          Remember movies you forgot you wanted to see
         </h2>
         <p className="mb-4 text-xl">
           Opening Night helps you rediscover upcoming and released movies from
           trailers you liked on YouTube. Turn on reminders and we'll email you
           when the movie is about to be released.
         </p>
+        <p className="mb-4 text-xl">
+          Join now to turn YouTube likes into movie nights.
+        </p>
         <SignInButton>
-          <button className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg px-8 py-4 cursor-pointer text-2xl">
-            Get started!
+          <button className="mt-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg px-6 py-2 cursor-pointer text-2xl">
+            Get started
           </button>
         </SignInButton>
         <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
