@@ -7,7 +7,7 @@ export function PrivacyPolicy() {
 
       <div className="prose prose-slate dark:prose-invert max-w-none">
         <p className="text-lg mb-6 text-slate-600 dark:text-slate-300">
-          Last updated: July 31, 2025
+          Last updated: August 5, 2025
         </p>
 
         <section id="information-we-collect" className="mb-8">
