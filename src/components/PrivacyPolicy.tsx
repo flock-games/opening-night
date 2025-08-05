@@ -10,7 +10,7 @@ export function PrivacyPolicy() {
           Last updated: July 31, 2025
         </p>
 
-        <section className="mb-8">
+        <section id="information-we-collect" className="mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-slate-700 dark:text-slate-100">
             Information We Collect
           </h2>
@@ -32,7 +32,7 @@ export function PrivacyPolicy() {
           </ul>
         </section>
 
-        <section className="mb-8">
+        <section id="how-we-use-your-information" className="mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-slate-700 dark:text-slate-100">
             How We Use Your Information
           </h2>
@@ -50,7 +50,7 @@ export function PrivacyPolicy() {
           </ul>
         </section>
 
-        <section className="mb-8">
+        <section id="email-notifications" className="mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-slate-700 dark:text-slate-100">
             Email Notifications
           </h2>
@@ -63,7 +63,7 @@ export function PrivacyPolicy() {
           </p>
         </section>
 
-        <section className="mb-8">
+        <section id="data-storage-security" className="mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-slate-700 dark:text-slate-100">
             Data Storage and Security
           </h2>
@@ -75,14 +75,14 @@ export function PrivacyPolicy() {
           </p>
         </section>
 
-        <section className="mb-8">
+        <section id="google-user-data-handling" className="mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-slate-700 dark:text-slate-100">
             Google User Data Handling
           </h2>
           <p className="mb-4 text-slate-600 dark:text-slate-300">
             Opening Night's use of Google user data is governed by strict
             privacy principles. We do not transfer or disclose your information
-            to third parties for purposes other than the ones provided
+            to third parties for purposes other than the ones provided:
           </p>
           <ul className="list-disc ml-6 mb-4 text-slate-600 dark:text-slate-300">
             <li>
@@ -101,16 +101,16 @@ export function PrivacyPolicy() {
             <li>
               <strong>Sharing:</strong> We do not transfer or disclose your
               Google user data to third parties for purposes other than
-              providing our core service
+              providing our core service.
             </li>
             <li>
               <strong>Retention:</strong> Your data is retained only as long as
-              necessary to provide the service or until you request deletion
+              necessary to provide the service or until you request deletion.
             </li>
           </ul>
           <p className="mb-4 text-slate-600 dark:text-slate-300">
             You can revoke Opening Night's access to your Google data at any
-            time through your
+            time through your{" "}
             <a
               href="https://myaccount.google.com/permissions"
               target="_blank"
@@ -123,7 +123,7 @@ export function PrivacyPolicy() {
           </p>
         </section>
 
-        <section className="mb-8">
+        <section id="your-rights" className="mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-slate-700 dark:text-slate-100">
             Your Rights
           </h2>
@@ -138,7 +138,7 @@ export function PrivacyPolicy() {
           </ul>
         </section>
 
-        <section className="mb-8">
+        <section id="third-party-services" className="mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-slate-700 dark:text-slate-100">
             Third-Party Services
           </h2>
@@ -162,7 +162,7 @@ export function PrivacyPolicy() {
           </ul>
         </section>
 
-        <section className="mb-8">
+        <section id="changes-to-privacy-policy" className="mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-slate-700 dark:text-slate-100">
             Changes to This Privacy Policy
           </h2>
@@ -173,7 +173,7 @@ export function PrivacyPolicy() {
           </p>
         </section>
 
-        <section className="mb-8">
+        <section id="contact" className="mb-8">
           <h2 className="text-2xl font-semibold mb-4 text-slate-700 dark:text-slate-100">
             Contact Us
           </h2>
