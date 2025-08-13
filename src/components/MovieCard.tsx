@@ -1,7 +1,7 @@
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
+// Temporarily disabled FontAwesome
+// Temporarily disabled FontAwesome icons
 import { useEffect, useRef } from "react";
 import { formatReleaseDate } from "../utils/dateUtils";
 
@@ -119,7 +119,7 @@ export function MovieCard({
             }}
             className="mt-6 px-2 py-1 cursor-pointer bg-slate-900 hover:bg-rose-500 text-rose-200 hover:text-white rounded-lg transition-colors duration-200 flex items-center gap-1 text-md"
           >
-            <FontAwesomeIcon icon={byPrefixAndName.faslr["trash"]} size="lg" />
+            ❌ ICON
             Remove
           </button>
         )}

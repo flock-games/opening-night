@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
+// Temporarily disabled FontAwesome
+// Temporarily disabled FontAwesome icons
 import { MovieCard } from "./MovieCard";
 import { EmailMovieListButton } from "./EmailMovieListButton";
 
