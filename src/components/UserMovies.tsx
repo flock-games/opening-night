@@ -35,13 +35,12 @@ export function UserMovies() {
       {upcomingMovies.length > 0 && (
         <MovieSection
           title="Coming Soon"
-          icon="calendar"
           movies={upcomingMovies}
           includeDate={true}
         />
       )}
       {releasedMovies.length > 0 && (
-        <MovieSection title="Released" icon="tv" movies={releasedMovies} />
+        <MovieSection title="Released" movies={releasedMovies} />
       )}
     </div>
   );

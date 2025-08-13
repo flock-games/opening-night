@@ -21,7 +21,7 @@ export function PrivacyPolicy() {
           </p>
           <ul className="list-disc ml-6 mb-4 text-slate-600 dark:text-slate-300">
             <li>
-              Your YouTube liked videos that are identified as movie trailers
+              Your YouTube activity that is identified as movie trailers (from either liked videos or full YouTube history, based on your sync choice)
             </li>
             <li>
               Movie information associated with those trailers (title, release
@@ -40,7 +40,7 @@ export function PrivacyPolicy() {
             We use the collected information to:
           </p>
           <ul className="list-disc ml-6 mb-4 text-slate-600 dark:text-slate-300">
-            <li>Show you trailers and movies you have liked on YouTube</li>
+            <li>Show you trailers and movies from your YouTube activity (based on your sync choice)</li>
             <li>Track which movies you're interested in</li>
             <li>
               Send you email notifications when movies you're interested in are
@@ -86,12 +86,11 @@ export function PrivacyPolicy() {
           </p>
           <ul className="list-disc ml-6 mb-4 text-slate-600 dark:text-slate-300">
             <li>
-              <strong>Access:</strong> We only access your YouTube liked videos
-              through Google's official APIs with your explicit consent
+              <strong>Access:</strong> We access your YouTube data through Google's official APIs with your explicit consent. You can choose to grant access to either your liked videos only or your entire YouTube activity history.
             </li>
             <li>
               <strong>Use:</strong> Your Google data is used solely to identify
-              movie trailers from your YouTube likes, provide movie
+              movie trailers from your YouTube activity (likes, comments, or full history based on your choice), provide movie
               recommendations, and optional email notifications.
             </li>
             <li>

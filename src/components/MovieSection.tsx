@@ -6,12 +6,10 @@ import { EmailMovieListButton } from "./EmailMovieListButton";
 
 export function MovieSection({
   title,
-  icon,
   movies,
   includeDate = false,
 }: {
   title: string;
-  icon: string;
   movies: any[];
   includeDate?: boolean;
 }) {
@@ -30,11 +28,7 @@ export function MovieSection({
     <div className="mb-4 mx-1 md:mx-4 lg:mx-auto lg:max-w-4xl">
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-xl font-black text-slate-600 dark:text-slate-100">
-          <FontAwesomeIcon
-            className="mr-1"
-            size="lg"
-            icon={byPrefixAndName.faslr[icon]}
-          />
+          <span className="mr-1 text-lg">📁</span>
           {title}
         </h2>
         <EmailMovieListButton movies={movies} listTitle={title} />

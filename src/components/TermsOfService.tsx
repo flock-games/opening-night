@@ -27,9 +27,9 @@ export function TermsOfService() {
           </h2>
           <p className="mb-4 text-slate-600 dark:text-slate-300">
             Opening Night is a web application that connects to your YouTube
-            account to identify movie trailers you have liked and provides
+            account to identify movie trailers from your YouTube activity and provides
             information about those movies, including release dates and the
-            ability to receive notifications when they become available.
+            ability to receive notifications when they become available. You can choose to sync either your liked videos only or your entire YouTube history.
           </p>
         </section>
 
@@ -41,7 +41,7 @@ export function TermsOfService() {
             By using our service, you authorize Opening Night to:
           </p>
           <ul className="list-disc ml-6 mb-4 text-slate-600 dark:text-slate-300">
-            <li>Access your YouTube liked videos to identify movie trailers</li>
+            <li>Access your YouTube data (either liked videos or full activity history, based on your choice) to identify movie trailers</li>
             <li>
               Use your email address for optional movie release notifications
             </li>

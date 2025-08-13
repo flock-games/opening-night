@@ -6,11 +6,20 @@ Opening Night helps you rediscover upcoming and released movies from trailers yo
 
 Opening Night is a full-stack web application featuring:
 
-- **YouTube Sync**: Connects to your YouTube account to analyze your liked videos and identify movie trailers
+- **YouTube Sync**: Connects to your YouTube account to analyze your liked videos OR your entire YouTube history to identify movie trailers
 - **Movie Discovery**: Automatically matches trailer videos to movie data using The Movie Database (TMDB) API
 - **Smart Notifications**: Sends email reminders when movies you're interested in are released
 - **Personal Dashboard**: Organizes your movies into "Coming Soon" and "Released" sections
 - **Email Integration**: Send yourself curated movie lists and manage notification preferences
+
+### YouTube Sync Options
+
+When syncing your YouTube data, you can choose between two options:
+
+1. **Search Liked videos only** - Analyzes only videos you have explicitly liked on YouTube (faster, more targeted)
+2. **Search my entire YouTube history** - Analyzes your complete YouTube activity history including likes, comments, and other interactions (comprehensive but slower)
+
+Both sync methods are limited to 50 pages of results to ensure reasonable performance.
 
 ### Tech Stack
 
