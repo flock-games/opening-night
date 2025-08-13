@@ -81,7 +81,7 @@ export const syncLikes = action({
     );
     const accessToken = clerkResponse.data[0].token;
 
-    let doneSyncing = false;
+    const doneSyncing = false;
     let pageToken = undefined;
     let page = 1;
     do {
@@ -111,7 +111,7 @@ export const syncLikes = action({
           const title = item.snippet.title.toLowerCase();
           return title.includes("trailer") || title.includes("teaser");
         });
-        for (var i = 0; i < trailers.length; i++) {
+        for (let i = 0; i < trailers.length; i++) {
           const item = trailers[i];
           const existingTrailer = await ctx.runQuery(
             internal.trailers.getByYoutubeId,
