@@ -19,6 +19,13 @@ export default defineSchema({
     releaseDate: v.string(),
     overview: v.string(),
     posterPath: v.string(),
+    streamingPlatforms: v.optional(v.array(v.object({
+      provider_id: v.number(),
+      provider_name: v.string(),
+      logo_path: v.string(),
+      display_priority: v.number(),
+    }))),
+    streamingPlatformsLastUpdated: v.optional(v.string()),
   }),
   userTrailers: defineTable({
     userId: v.string(),

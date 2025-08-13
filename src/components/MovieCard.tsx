@@ -81,6 +81,36 @@ export function MovieCard({
           </p>
         )}
 
+        {/* Streaming platforms - show for released movies */}
+        {movie.streamingPlatforms && movie.streamingPlatforms.length > 0 && (
+          <div className={`mt-2 ${isExpanded ? "mb-2" : "mb-1"}`}>
+            <p className={`text-xs text-slate-600 dark:text-slate-400 mb-1 ${isExpanded ? "text-sm" : ""}`}>
+              Available on:
+            </p>
+            <div className="flex flex-wrap gap-1">
+              {movie.streamingPlatforms
+                .sort((a: any, b: any) => a.display_priority - b.display_priority)
+                .slice(0, isExpanded ? 10 : 4)
+                .map((platform: any) => (
+                  <span
+                    key={platform.provider_id}
+                    className={`px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full ${
+                      isExpanded ? "text-xs" : "text-xs"
+                    } font-medium`}
+                  >
+                    {platform.provider_name}
+                  </span>
+                ))
+              }
+              {!isExpanded && movie.streamingPlatforms.length > 4 && (
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  +{movie.streamingPlatforms.length - 4} more
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
         <p
           className={`text-slate-700 dark:text-slate-300 ${
             isExpanded
