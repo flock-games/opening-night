@@ -1,9 +1,89 @@
 import { v } from "convex/values";
-import { internalAction, internalMutation, query } from "./_generated/server";
+import {
+  internalAction,
+  internalMutation,
+  internalQuery,
+  query,
+} from "./_generated/server";
 import { internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 
 const apiRoot = "https://api.themoviedb.org/3";
+
+// Helper function to find or create streaming platform entries
+export const findOrCreateStreamingPlatform = internalMutation({
+  args: {
+    provider_id: v.number(),
+    provider_name: v.string(),
+    logo_path: v.string(),
+    display_priority: v.number(),
+  },
+  handler: async (ctx, args) => {
+    // First try to find existing platform
+    const existing = await ctx.db
+      .query("streamingPlatforms")
+      .withIndex("by_provider_id", (q) => q.eq("provider_id", args.provider_id))
+      .first();
+
+    if (existing) {
+      // Update if any fields have changed
+      if (
+        existing.provider_name !== args.provider_name ||
+        existing.logo_path !== args.logo_path ||
+        existing.display_priority !== args.display_priority
+      ) {
+        await ctx.db.patch(existing._id, {
+          provider_name: args.provider_name,
+          logo_path: args.logo_path,
+          display_priority: args.display_priority,
+        });
+      }
+      return existing._id;
+    }
+
+    // Create new platform
+    return await ctx.db.insert("streamingPlatforms", args);
+  },
+});
+
+// Helper function to get streaming platforms with their details
+export const getStreamingPlatformsWithDetails = internalMutation({
+  args: {
+    platformIds: v.array(v.id("streamingPlatforms")),
+  },
+  handler: async (ctx, { platformIds }) => {
+    const platforms = await Promise.all(
+      platformIds.map((id) => ctx.db.get(id)),
+    );
+    return platforms.filter((p) => p !== null);
+  },
+});
+
+// Helper function to create multiple streaming platforms and return their IDs
+export const createStreamingPlatforms = internalMutation({
+  args: {
+    platforms: v.array(
+      v.object({
+        provider_id: v.number(),
+        provider_name: v.string(),
+        logo_path: v.string(),
+        display_priority: v.number(),
+      }),
+    ),
+  },
+  handler: async (ctx, { platforms }): Promise<Id<"streamingPlatforms">[]> => {
+    const platformIds: Id<"streamingPlatforms">[] = await Promise.all(
+      platforms.map(
+        async (platform) =>
+          await ctx.runMutation(
+            internal.movies.findOrCreateStreamingPlatform,
+            platform,
+          ),
+      ),
+    );
+    return platformIds;
+  },
+});
 
 export const fetchUserMovies = query({
   args: {},
@@ -35,8 +115,21 @@ export const fetchUserMovies = query({
         if (!trailer?.movieId) return null;
         const movie = await ctx.db.get(trailer.movieId);
         if (!movie) return null;
+
+        // Fetch streaming platform details if they exist
+        let streamingPlatforms = null;
+        if (movie.streamingPlatforms && movie.streamingPlatforms.length > 0) {
+          const platforms = await Promise.all(
+            movie.streamingPlatforms.map((id) => {
+              return ctx.db.get(id);
+            }),
+          );
+          streamingPlatforms = platforms.filter((p) => p !== null);
+        }
+
         return {
           ...movie,
+          streamingPlatforms,
           userTrailerId: trailer.userTrailerId,
           trailer: {
             youtubeId: trailer.youtubeId,
@@ -82,14 +175,29 @@ export const search = internalAction({
     )[0];
 
     // Fetch streaming platforms for the movie
-    let streamingPlatforms;
+    let streamingPlatformIds;
     try {
-      streamingPlatforms = await ctx.runAction(internal.movies.fetchStreamingProvidersFromTMDB, {
-        tmdbId: `${bestMatch.id}`,
-      });
+      const streamingPlatforms = await ctx.runAction(
+        internal.movies.fetchStreamingProvidersFromTMDB,
+        {
+          tmdbId: `${bestMatch.id}`,
+        },
+      );
+
+      if (streamingPlatforms && streamingPlatforms.length > 0) {
+        streamingPlatformIds = await ctx.runMutation(
+          internal.movies.createStreamingPlatforms,
+          {
+            platforms: streamingPlatforms,
+          },
+        );
+      }
     } catch (error) {
-      console.error(`Failed to fetch streaming providers for ${bestMatch.title}:`, error);
-      streamingPlatforms = undefined;
+      console.error(
+        `Failed to fetch streaming providers for ${bestMatch.title}:`,
+        error,
+      );
+      streamingPlatformIds = undefined;
     }
 
     const id: Id<"movies"> = await ctx.runMutation(internal.movies.create, {
@@ -98,7 +206,7 @@ export const search = internalAction({
       releaseDate: bestMatch.release_date,
       overview: bestMatch.overview,
       posterPath: bestMatch.poster_path,
-      streamingPlatforms: streamingPlatforms,
+      streamingPlatforms: streamingPlatformIds,
     });
 
     return id;
@@ -112,15 +220,17 @@ export const create = internalMutation({
     releaseDate: v.optional(v.string()),
     overview: v.optional(v.string()),
     posterPath: v.optional(v.string()),
-    streamingPlatforms: v.optional(v.array(v.object({
-      provider_id: v.number(),
-      provider_name: v.string(),
-      logo_path: v.string(),
-      display_priority: v.number(),
-    }))),
+    streamingPlatforms: v.optional(v.array(v.id("streamingPlatforms"))),
   },
   handler: async (ctx, args): Promise<Id<"movies">> => {
-    const { tmdbId, title, releaseDate, overview, posterPath, streamingPlatforms } = args;
+    const {
+      tmdbId,
+      title,
+      releaseDate,
+      overview,
+      posterPath,
+      streamingPlatforms,
+    } = args;
 
     const id = await ctx.db.insert("movies", {
       tmdbId,
@@ -129,7 +239,9 @@ export const create = internalMutation({
       overview: overview ?? "",
       posterPath: posterPath ?? "",
       streamingPlatforms: streamingPlatforms,
-      streamingPlatformsLastUpdated: streamingPlatforms ? new Date().toISOString() : undefined,
+      streamingPlatformsLastUpdated: streamingPlatforms
+        ? new Date().toISOString()
+        : undefined,
     });
 
     return id;
@@ -270,11 +382,12 @@ export const fetchStreamingProvidersFromTMDB = internalAction({
     }
 
     // Remove duplicates and return provider info
-    const uniqueProviders = providers.filter((provider, index, self) =>
-      index === self.findIndex(p => p.provider_id === provider.provider_id)
+    const uniqueProviders = providers.filter(
+      (provider, index, self) =>
+        index === self.findIndex((p) => p.provider_id === provider.provider_id),
     );
 
-    return uniqueProviders.map(provider => ({
+    return uniqueProviders.map((provider) => ({
       provider_id: provider.provider_id,
       provider_name: provider.provider_name,
       logo_path: provider.logo_path,
@@ -296,16 +409,26 @@ export const updateMovieReleaseDate = internalMutation({
 export const updateMovieStreamingPlatforms = internalMutation({
   args: {
     movieId: v.id("movies"),
-    streamingPlatforms: v.array(v.object({
-      provider_id: v.number(),
-      provider_name: v.string(),
-      logo_path: v.string(),
-      display_priority: v.number(),
-    })),
+    streamingPlatforms: v.array(
+      v.object({
+        provider_id: v.number(),
+        provider_name: v.string(),
+        logo_path: v.string(),
+        display_priority: v.number(),
+      }),
+    ),
   },
   handler: async (ctx, { movieId, streamingPlatforms }) => {
-    await ctx.db.patch(movieId, { 
-      streamingPlatforms,
+    // Convert streaming platform objects to IDs
+    const platformIds = await ctx.runMutation(
+      internal.movies.createStreamingPlatforms,
+      {
+        platforms: streamingPlatforms,
+      },
+    );
+
+    await ctx.db.patch(movieId, {
+      streamingPlatforms: platformIds,
       streamingPlatformsLastUpdated: new Date().toISOString(),
     });
   },
@@ -335,7 +458,9 @@ export const updateReleasedMoviesStreamingPlatforms = internalAction({
     errorCount: number;
     totalChecked: number;
   }> => {
-    console.log("Starting weekly streaming platforms update for released movies...");
+    console.log(
+      "Starting weekly streaming platforms update for released movies...",
+    );
 
     // Get all movies that have been released (release date < today)
     const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
@@ -352,8 +477,10 @@ export const updateReleasedMoviesStreamingPlatforms = internalAction({
     for (const movie of movies) {
       try {
         // Check if we should update (either never updated or updated more than a week ago)
-        const shouldUpdate = !movie.streamingPlatformsLastUpdated || 
-          new Date(movie.streamingPlatformsLastUpdated) < new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const shouldUpdate =
+          !movie.streamingPlatformsLastUpdated ||
+          new Date(movie.streamingPlatformsLastUpdated) <
+            new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
         if (!shouldUpdate) {
           continue;
@@ -370,14 +497,17 @@ export const updateReleasedMoviesStreamingPlatforms = internalAction({
           movieId: movie._id,
           streamingPlatforms: streamingPlatforms,
         });
-        
+
         updatedCount++;
         console.log(
           `Updated streaming platforms for ${movie.title}: ${streamingPlatforms.length} providers`,
         );
       } catch (error) {
         errorCount++;
-        console.error(`Failed to update streaming platforms for movie ${movie.title}:`, error);
+        console.error(
+          `Failed to update streaming platforms for movie ${movie.title}:`,
+          error,
+        );
       }
     }
 
@@ -385,5 +515,120 @@ export const updateReleasedMoviesStreamingPlatforms = internalAction({
       `Streaming platforms update complete: ${updatedCount} updated, ${errorCount} errors`,
     );
     return { updatedCount, errorCount, totalChecked: movies.length };
+  },
+});
+
+// Migration function to convert existing movie streaming platforms to the new structure
+export const migrateStreamingPlatforms = internalAction({
+  args: {},
+  handler: async (
+    ctx,
+  ): Promise<{
+    migratedCount: number;
+    errorCount: number;
+    totalChecked: number;
+  }> => {
+    console.log("Starting migration of streaming platforms...");
+
+    // Get all movies
+    const movies: any[] = await ctx.runQuery(
+      internal.movies.getAllMoviesForMigration,
+    );
+
+    let migratedCount = 0;
+    let errorCount = 0;
+
+    for (const movie of movies) {
+      try {
+        // Check if movie has old format streaming platforms (array of objects)
+        if (
+          movie.streamingPlatforms &&
+          Array.isArray(movie.streamingPlatforms) &&
+          movie.streamingPlatforms.length > 0 &&
+          typeof movie.streamingPlatforms[0] === "object" &&
+          "provider_id" in movie.streamingPlatforms[0]
+        ) {
+          console.log(
+            `Migrating streaming platforms for movie: ${movie.title}`,
+          );
+
+          // Convert old format to new format
+          const platformIds = await ctx.runMutation(
+            internal.movies.createStreamingPlatforms,
+            {
+              platforms: movie.streamingPlatforms as any,
+            },
+          );
+
+          // Update the movie with new platform IDs
+          await ctx.runMutation(
+            internal.movies.updateMovieStreamingPlatformIds,
+            {
+              movieId: movie._id,
+              streamingPlatformIds: platformIds,
+            },
+          );
+
+          migratedCount++;
+        }
+      } catch (error) {
+        console.error(
+          `Failed to migrate streaming platforms for movie ${movie.title}:`,
+          error,
+        );
+        errorCount++;
+      }
+    }
+
+    console.log(
+      `Migration complete: ${migratedCount} movies migrated, ${errorCount} errors`,
+    );
+    return { migratedCount, errorCount, totalChecked: movies.length };
+  },
+});
+
+// Helper function for migration
+export const getAllMoviesForMigration = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("movies").collect();
+  },
+});
+
+// Helper function for migration
+export const updateMovieStreamingPlatformIds = internalMutation({
+  args: {
+    movieId: v.id("movies"),
+    streamingPlatformIds: v.array(v.id("streamingPlatforms")),
+  },
+  handler: async (ctx, { movieId, streamingPlatformIds }) => {
+    await ctx.db.patch(movieId, {
+      streamingPlatforms: streamingPlatformIds,
+    });
+  },
+});
+
+// Helper function to test the new streaming platforms structure
+export const testStreamingPlatformsStructure = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    const movies = await ctx.db.query("movies").take(5);
+    const streamingPlatforms = await ctx.db
+      .query("streamingPlatforms")
+      .take(10);
+
+    return {
+      totalMovies: movies.length,
+      totalStreamingPlatforms: streamingPlatforms.length,
+      sampleMovies: movies.map((movie) => ({
+        title: movie.title,
+        hasStreamingPlatforms: !!movie.streamingPlatforms,
+        platformCount: movie.streamingPlatforms?.length || 0,
+      })),
+      samplePlatforms: streamingPlatforms.map((platform) => ({
+        provider_id: platform.provider_id,
+        provider_name: platform.provider_name,
+      })),
+    };
   },
 });

@@ -4,6 +4,7 @@ export { UserMovies } from "./UserMovies";
 export { NoUserMovies } from "./NoUserMovies";
 export { MovieSection } from "./MovieSection";
 export { MovieCard } from "./MovieCard";
+export { MoviePlatformList } from "./MoviePlatformList";
 export { SyncYoutubeLikesButton } from "./SyncYoutubeLikesButton";
 export { NotificationToggle } from "./NotificationToggle";
 export { EmailMovieListButton } from "./EmailMovieListButton";
