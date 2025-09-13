@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
 import { useEffect, useRef } from "react";
 import { formatReleaseDate } from "../utils/dateUtils";
+import { MoviePlatformList } from "./MoviePlatformList";
 
 export function MovieCard({
   movie,
@@ -80,6 +81,11 @@ export function MovieCard({
             {displayDate}
           </p>
         )}
+
+        <MoviePlatformList
+          platforms={movie.streamingPlatforms}
+          isExpanded={isExpanded}
+        />
 
         <p
           className={`text-slate-700 dark:text-slate-300 ${

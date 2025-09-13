@@ -13,12 +13,33 @@ export default defineSchema({
   })
     .index("by_youtube_id", ["youtubeId"])
     .index("by_movie_id", ["movieId"]),
+  streamingPlatforms: defineTable({
+    provider_id: v.number(),
+    provider_name: v.string(),
+    logo_path: v.string(),
+    display_priority: v.number(),
+  }).index("by_provider_id", ["provider_id"]),
   movies: defineTable({
     tmdbId: v.string(),
     title: v.string(),
     releaseDate: v.string(),
     overview: v.string(),
     posterPath: v.string(),
+    streamingPlatforms: v.optional(
+      v.union(
+        v.array(v.id("streamingPlatforms")), // New format: array of IDs
+        v.array(
+          v.object({
+            // Old format: array of objects (for migration compatibility)
+            provider_id: v.number(),
+            provider_name: v.string(),
+            logo_path: v.string(),
+            display_priority: v.number(),
+          }),
+        ),
+      ),
+    ),
+    streamingPlatformsLastUpdated: v.optional(v.string()),
   }),
   userTrailers: defineTable({
     userId: v.string(),

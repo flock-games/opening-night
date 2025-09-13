@@ -109,7 +109,11 @@ export const syncLikes = action({
       if ("items" in data) {
         const trailers = data.items.filter((item: any) => {
           const title = item.snippet.title.toLowerCase();
-          return title.includes("trailer") || title.includes("teaser");
+          return (
+            title.includes("trailer") ||
+            title.includes("teaser") ||
+            title.includes("preview")
+          );
         });
         for (var i = 0; i < trailers.length; i++) {
           const item = trailers[i];

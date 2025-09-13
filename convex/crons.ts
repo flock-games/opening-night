@@ -17,4 +17,11 @@ crons.weekly(
   internal.movies.updateUnreleasedMoviesDates,
 );
 
+// Run weekly on Sundays at 1 AM UTC to update streaming platforms for released movies  
+crons.weekly(
+  "update streaming platforms",
+  { dayOfWeek: "sunday", hourUTC: 1, minuteUTC: 0 },
+  internal.movies.updateReleasedMoviesStreamingPlatforms,
+);
+
 export default crons;
