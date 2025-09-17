@@ -1,7 +1,5 @@
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -42,11 +40,15 @@ export function NotificationToggle() {
       } ${isLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
       title={`${isEnabled ? "Disable" : "Enable"} release email notifications`}
     >
-      <FontAwesomeIcon
-        icon={byPrefixAndName.faslr["bell"]}
-        size="lg"
-        className={`transition-transform duration-300 group-hover:rotate-45 ${isLoading ? "animate-pulse" : ""}`}
-      />
+      <svg 
+        className={`w-5 h-5 transition-transform duration-300 group-hover:rotate-45 ${isLoading ? "animate-pulse" : ""}`}
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5V2z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 19c0 1.1.9 2 2 2h8.586a1 1 0 00.707-.293l5.414-5.414A1 1 0 0021 14.586V9a2 2 0 00-2-2H7a2 2 0 00-2 2v10z" />
+      </svg>
     </button>
   );
 }

@@ -1,7 +1,7 @@
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
+// Temporarily disabled FontAwesome
+// Temporarily disabled FontAwesome icons
 import { useEffect, useRef } from "react";
 import { formatReleaseDate } from "../utils/dateUtils";
 import { MoviePlatformList } from "./MoviePlatformList";
@@ -125,7 +125,7 @@ export function MovieCard({
             }}
             className="mt-6 px-2 py-1 cursor-pointer bg-slate-900 hover:bg-rose-500 text-rose-200 hover:text-white rounded-lg transition-colors duration-200 flex items-center gap-1 text-md"
           >
-            <FontAwesomeIcon icon={byPrefixAndName.faslr["trash"]} size="lg" />
+            ❌ ICON
             Remove
           </button>
         )}
@@ -153,15 +153,18 @@ export function MovieCard({
 
       {!isExpanded && (
         <div className="md:hidden group-hover:block rounded-full bg-slate-800 hover:bg-rose-500 text-slate-300 hover:text-white absolute top-4 right-4 p-1 z-10">
-          <FontAwesomeIcon
-            onClick={(e) => {
+          <svg
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               dismissSuggestion();
             }}
-            className="transition-colors duration-200 cursor-pointer"
-            size="lg"
-            icon={byPrefixAndName.faslr["trash"]}
-          />
+            className="w-5 h-5 transition-colors duration-200 cursor-pointer"
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
         </div>
       )}
     </div>

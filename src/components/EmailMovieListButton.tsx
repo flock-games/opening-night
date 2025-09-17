@@ -1,7 +1,5 @@
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { byPrefixAndName } from "@awesome.me/kit-2f975920ad/icons";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -46,17 +44,21 @@ export function EmailMovieListButton({
 
   return (
     <button
-      onClick={handleEmailList}
+      onClick={() => void handleEmailList()}
       disabled={isLoading}
       className="group flex items-center gap-2 px-3 py-2 text-sm cursor-pointer dark:hover:bg-slate-700 hover:bg-slate-300 dark:text-white rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
       title={`Email me this ${listTitle.toLowerCase()}`}
     >
-      <FontAwesomeIcon
-        icon={byPrefixAndName.faslr["envelope"]}
-        className={`transition-transform duration-300 group-hover:rotate-15 ${
+      <svg 
+        className={`w-4 h-4 transition-transform duration-300 group-hover:rotate-15 ${
           isLoading ? "animate-pulse" : ""
         }`}
-      />
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
       Email me this list
     </button>
   );

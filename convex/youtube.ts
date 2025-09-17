@@ -59,7 +59,11 @@ export const updateSync = internalMutation({
 });
 
 export const syncLikes = action({
-  handler: async (ctx) => {
+  args: {
+    syncType: v.optional(v.union(v.literal("likes"), v.literal("history"))),
+  },
+  handler: async (ctx, args) => {
+    const { syncType = "likes" } = args;
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
@@ -89,11 +93,21 @@ export const syncLikes = action({
         id: syncId,
         status: `Syncing page ${page}`,
       });
-      let url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&myRating=like&maxResults=50`;
+
+      let url: string;
+      if (syncType === "history") {
+        // Use Activities API to get full YouTube history
+        url = `https://youtube.googleapis.com/youtube/v3/activities?part=snippet,contentDetails&mine=true&maxResults=50`;
+      } else {
+        // Use Videos API to get liked videos only
+        url = `https://youtube.googleapis.com/youtube/v3/videos?part=snippet&myRating=like&maxResults=50`;
+      }
+
       if (pageToken) {
         url += `&pageToken=${pageToken}`;
       }
       url += `&key=${process.env.GOOGLE_API_KEY}`;
+      
       const response = await fetch(url, {
         headers: new Headers({
           Authorization: `Bearer ${accessToken}`,
@@ -107,7 +121,41 @@ export const syncLikes = action({
       }
 
       if ("items" in data) {
-        const trailers = data.items.filter((item: any) => {
+        let videosToProcess: any[] = [];
+
+        if (syncType === "history") {
+          // Process activities from the Activities API
+          videosToProcess = data.items
+            .filter((item: any) => {
+              // Filter for video-related activities
+              return item.snippet.type === "like" || 
+                     item.snippet.type === "favorite" ||
+                     item.snippet.type === "comment" ||
+                     (item.contentDetails && item.contentDetails.like);
+            })
+            .map((item: any) => {
+              // Extract video information from activity
+              let videoData = null;
+              if (item.contentDetails?.like) {
+                videoData = {
+                  id: item.contentDetails.like.resourceId.videoId,
+                  snippet: item.snippet,
+                };
+              } else if (item.contentDetails?.favorite) {
+                videoData = {
+                  id: item.contentDetails.favorite.resourceId.videoId,
+                  snippet: item.snippet,
+                };
+              }
+              return videoData;
+            })
+            .filter(Boolean);
+        } else {
+          // Process videos from the Videos API (existing logic)
+          videosToProcess = data.items;
+        }
+
+        const trailers = videosToProcess.filter((item: any) => {
           const title = item.snippet.title.toLowerCase();
           return (
             title.includes("trailer") ||
@@ -115,7 +163,8 @@ export const syncLikes = action({
             title.includes("preview")
           );
         });
-        for (var i = 0; i < trailers.length; i++) {
+
+        for (let i = 0; i < trailers.length; i++) {
           const item = trailers[i];
           const existingTrailer = await ctx.runQuery(
             internal.trailers.getByYoutubeId,
@@ -169,7 +218,7 @@ export const syncLikes = action({
       } else {
         pageToken = undefined;
       }
-    } while (!doneSyncing && pageToken !== undefined && page < 100);
+    } while (!doneSyncing && pageToken !== undefined && page < 50);
     await ctx.runMutation(internal.youtube.updateSync, {
       id: syncId,
       status: "done",
